@@ -111,19 +111,22 @@
       <org.junit.platform.version>1.2.0</org.junit.platform.version>
       <org.junit.jupiter.version>5.2.0</org.junit.jupiter.version>
       <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+      <org.java-docker.version>3.1.0-rc-3</org.java-docker.version>
+      <org.slf4j.version>1.7.5</org.slf4j.version>
+      <org.codehouse.mojo.version>1.6.0</org.codehouse.mojo.version>
    </properties>
 
    <build>
       <plugins>
-          <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
-          <configuration>
-              <source>1.8</source>
-              <target>1.8</target>
-          </configuration>
-        </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.7.0</version>
+            <configuration>
+               <source>1.8</source>
+               <target>1.8</target>
+            </configuration>
+         </plugin>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${maven-surefire-plugin.version}</version>
@@ -141,31 +144,68 @@
             </dependencies>
          </plugin>
          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>3.0.0</version>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${org.codehouse.mojo.version}</version>
             <executions>
-                <execution>
-                    <id>validate</id>
-                    <phase>validate</phase>
-                    <configuration>
-                        <configLocation>checkstyle.xml</configLocation>
-                       <encoding>UTF-8</encoding>
-                       <consoleOutput>true</consoleOutput>
-                       <failsOnError>true</failsOnError>
-                       <linkXRef>false</linkXRef>
-                   </configuration>
-                   <goals>
-                       <goal>check</goal>
-                   </goals>
+               <execution>
+                  <goals>
+                     <goal>java</goal>
+                  </goals>
                </execution>
-           </executions>
+            </executions>
+            <configuration>
+               <mainClass>com.redhat.patriot.network_simulator.example.Main</mainClass>
+               <cleanupDaemonThreads>false</cleanupDaemonThreads>
+            </configuration>
          </plugin>
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+               <archive>
+                  <manifest>
+                     <mainClass>com.redhat.patriot.network_simulator.example.Main</mainClass>
+                  </manifest>
+               </archive>
+               <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+               </descriptorRefs>
+            </configuration>
+         </plugin>
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-checkstyle-plugin</artifactId>
+         <version>3.0.0</version>
+         <executions>
+            <execution>
+               <id>validate</id>
+               <phase>validate</phase>
+               <configuration>
+                  <configLocation>checkstyle.xml</configLocation>
+                  <encoding>UTF-8</encoding>
+                  <consoleOutput>true</consoleOutput>
+                  <failsOnError>true</failsOnError>
+                  <linkXRef>false</linkXRef>
+               </configuration>
+               <goals>
+                  <goal>check</goal>
+               </goals>
+            </execution>
+         </executions>
+      </plugin>
       </plugins>
    </build>
-
-
    <dependencies>
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-simple</artifactId>
+         <version>${org.slf4j.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.github.docker-java</groupId>
+         <artifactId>docker-java</artifactId>
+         <version>${org.java-docker.version}</version>
+      </dependency>
       <dependency>
          <groupId>org.junit.jupiter</groupId>
          <artifactId>junit-jupiter-api</artifactId>

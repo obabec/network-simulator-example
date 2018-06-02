@@ -8,7 +8,7 @@ pipeline {
         stage('Checkstyle') {
             steps {
                 sh '''
-                 mvn site
+                 mvn compile
                 '''
             }
             post {

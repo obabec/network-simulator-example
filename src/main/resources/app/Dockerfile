@@ -30,4 +30,5 @@ RUN apt-get update \
 
 WORKDIR /
 ADD setGW setGW
+RUN ["chmod", "+x", "/setGW"]
 CMD ["/sbin/my_init"]

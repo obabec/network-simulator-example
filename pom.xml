@@ -114,6 +114,7 @@
       <org.java-docker.version>3.1.0-rc-3</org.java-docker.version>
       <org.slf4j.version>1.7.5</org.slf4j.version>
       <org.codehouse.mojo.version>1.6.0</org.codehouse.mojo.version>
+      <org.args4j.version>2.33</org.args4j.version>
    </properties>
 
    <build>
@@ -211,6 +212,11 @@
          <artifactId>junit-jupiter-api</artifactId>
          <version>${org.junit.jupiter.version}</version>
          <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>args4j</groupId>
+         <artifactId>args4j</artifactId>
+         <version>${org.args4j.version}</version>
       </dependency>
    </dependencies>
 

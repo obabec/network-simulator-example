@@ -22,7 +22,7 @@ public class Cleaner {
         if (!outputCont.isEmpty()) {
             for (Container container: outputCont) {
 
-                if (!container.getStatus().contains("Exited")) {
+                if (!container.getStatus().contains("Exited") && !container.getStatus().contains("Created")) {
                     dockerClient.killContainerCmd(container.getId()).exec();
                 }
                 dockerClient.removeContainerCmd(container.getId()).exec();
@@ -30,7 +30,7 @@ public class Cleaner {
         }
 
         List<Network> outputNetwork = dockerClient.listNetworksCmd()
-                .withNameFilter(networks.get(0), networks.get(1)).exec();
+                .withNameFilter(String.join(", ", networks)).exec();
         if (!outputNetwork.isEmpty()) {
             for (Network network: outputNetwork) {
                 dockerClient.removeNetworkCmd(network.getName()).exec();

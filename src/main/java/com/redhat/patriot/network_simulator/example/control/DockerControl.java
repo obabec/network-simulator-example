@@ -14,6 +14,7 @@ import com.redhat.patriot.network_simulator.example.network.DockerNetwork;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class DockerControl {
@@ -31,12 +32,12 @@ public class DockerControl {
 
             buildImages(tagApp, tagRouter, dockerClient);
 
-            DockerNetwork dockerNetwork = new DockerNetwork();
+            DockerNetwork dockerNetwork = new DockerNetwork(dockerClient);
             Network serverNetwork = dockerNetwork.createNetworkWithSubnet("172.22.0.0/16",
-                    "server_network", dockerClient);
+                    "server_network");
             networks.add(serverNetwork.getName());
             Network clientNetwork = dockerNetwork.createNetworkWithSubnet("172.23.0.0/16",
-                    "client_network", dockerClient );
+                    "client_network");
             networks.add(clientNetwork.getName());
 
             CreateContainerResponse router = createConnectAndStart(tagRouter ,"router",
@@ -63,8 +64,8 @@ public class DockerControl {
     void buildImages(String tagApp, String tagRouter, DockerClient dockerClient) {
 
         DockerImage dockerImage = new DockerImage(dockerClient);
-        dockerImage.buildImage(tagApp, "app/Dockerfile");
-        dockerImage.buildImage(tagRouter, "router/Dockerfile");
+        dockerImage.buildImage(new HashSet<>(Arrays.asList(tagApp)), "app/Dockerfile");
+        dockerImage.buildImage(new HashSet<>(Arrays.asList(tagRouter)), "router/Dockerfile");
     }
 
     CreateContainerResponse createConnectAndStart(String tag, String name, List<String> networkIds) {

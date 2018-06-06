@@ -38,5 +38,9 @@ public class DockerCont {
                 exec(new ExecStartResultCallback(System.out, System.err)).awaitCompletion(10,TimeUnit.SECONDS);
     }
 
+    public void deleteCont(String name) {
+        dockerClient.removeContainerCmd(name).exec();
+    }
+
 
 }

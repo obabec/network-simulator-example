@@ -1,4 +1,4 @@
-package com.redhat.patriot.network_simulator.example.control;
+package com.redhat.patriot.network_simulator.example.manager;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-public class DockerControl {
+public class DockerManager {
     private DockerClient dockerClient = DockerClientBuilder.
             getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
     private DockerCont dockerCont = new DockerCont(dockerClient);

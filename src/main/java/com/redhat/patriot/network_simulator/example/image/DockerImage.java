@@ -13,15 +13,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
-public class DockerImage {
+/**
+ * Class representing DockerImage. Providing necessary functionality, like building and deleting images.
+ */
+public class DockerImage  implements Image{
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerImage.class);
 
     private DockerClient dockerClient;
 
+    /**
+     * Instantiates a new Docker image.
+     *
+     * @param dockerClient the docker client
+     */
     public DockerImage(DockerClient dockerClient) {
         this.dockerClient = dockerClient;
     }
 
+    /**
+     * Method providing image building and selecting right path for resource files.
+     * @param tag Set of image tags
+     * @param path Path for dockerfile
+     */
     public void buildImage(Set<String> tag, String path) {
 
         FileUtils fileUtils = new FileUtils();
@@ -54,13 +67,22 @@ public class DockerImage {
                 e.printStackTrace();
             }
 
-
-
         } else {
             LOGGER.warn("DOCKERFILES does not exists");
             System.exit(0);
         }
     }
+
+    @Override
+    public void deleteImage(Set<String> tags) {
+
+    }
+
+    /**
+     * Delete image.
+     *
+     * @param imageTag the image tag
+     */
     public void deleteImage(String imageTag) {
         dockerClient.removeImageCmd(imageTag).exec();
     }

@@ -1,52 +1,51 @@
 package com.redhat.patriot.network_simulator.example.cleanup;
 
-import com.github.dockerjava.api.model.Container;
-import com.github.dockerjava.api.model.Network;
 import com.redhat.patriot.network_simulator.example.TestClass;
-import com.redhat.patriot.network_simulator.example.container.DockerCont;
+import com.redhat.patriot.network_simulator.example.container.DockerContainer;
 import com.redhat.patriot.network_simulator.example.image.DockerImage;
+import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import com.redhat.patriot.network_simulator.example.network.DockerNetwork;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * The type Cleaner test.
+ */
 class CleanerTest extends TestClass {
 
+    /**
+     * Clean up test.
+     */
     @Test
     void cleanUp() {
+        DockerManager dockerManager = new DockerManager();
+        List<String> tags = Arrays.asList("testtag:01");
+        DockerImage dockerImage = new DockerImage(dockerClient);
+        dockerImage.buildImage(new HashSet<>(tags), "app/Dockerfile");
+
+        DockerContainer dockerContainer =
+                (DockerContainer) dockerManager.createContainer("test_cont", tags.get(0));
+
+        DockerNetwork dockerNetwork =
+                (DockerNetwork) dockerManager.createNetwork("test_network", "175.28.0.0/16");
+
+        dockerContainer.connectToNetwork(Arrays.asList(dockerNetwork));
 
         Cleaner cleaner = new Cleaner(dockerClient);
-        DockerCont dockerCont = new DockerCont(dockerClient);
-        DockerNetwork dockerNetwork = new DockerNetwork(dockerClient);
-        DockerImage dockerImage = new DockerImage(dockerClient);
+        List<String> networks = new ArrayList<>();
+        networks.add(dockerNetwork.getName());
+        List<String> conts = new ArrayList<>();
+        conts.add(dockerContainer.getName());
 
-        List<String> tags = Arrays.asList("test_tag:01");
-        List<String> conts = Arrays.asList("test_cont01", "test_cont02");
-        List<String> networks = Arrays.asList("test_network");
+        cleaner.cleanUp(Arrays.asList(dockerContainer.getName()), Arrays.asList(dockerNetwork.getName()));
 
-        dockerImage.buildImage(new HashSet<>(tags), "router/Dockerfile");
-
-        for (String container:conts) {
-            dockerCont.createContainer(tags.get(0), container);
-        }
-
-        dockerNetwork.createNetworkWithSubnet("172.42.0.0/16", networks.get(0));
-
-
-        cleaner.cleanUp(networks, conts);
-
-        List<Container> outputConts = dockerClient.listContainersCmd().withShowAll(true)
-                .withNameFilter(conts).exec();
-        List<Network> outputNetworks = dockerClient.listNetworksCmd().withNameFilter(networks.get(0)).exec();
-
-        assertEquals(true, outputConts.isEmpty());
-        assertEquals(true, outputNetworks.isEmpty());
-
-        dockerImage.deleteImage(tags.get(0));
+        assertEquals((dockerContainer.exists() && dockerNetwork.exists(dockerManager)), false);
 
     }
 }

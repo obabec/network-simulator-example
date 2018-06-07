@@ -9,8 +9,14 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * The type File utils test.
+ */
 class FileUtilsTest {
 
+    /**
+     * Convert to file test.
+     */
     @Test
     void convertToFile() {
 
@@ -28,6 +34,9 @@ class FileUtilsTest {
         }
     }
 
+    /**
+     * Delete dir with files test.
+     */
     @Test
     void deleteDirWithFiles() {
         try {
@@ -41,6 +50,11 @@ class FileUtilsTest {
         }
     }
 
+    /**
+     * Write to file.
+     *
+     * @param path the path
+     */
     void writeToFile(String path) {
         try (PrintWriter writer = new PrintWriter(path, "UTF-8")) {
             for (int i = 0; i < 50; i++) {

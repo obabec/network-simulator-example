@@ -10,8 +10,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * The type Docker image test.
+ */
 class DockerImageTest extends TestClass {
 
+    /**
+     * Build image test.
+     */
     @Test
     void buildImage() {
 

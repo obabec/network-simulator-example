@@ -1,8 +1,7 @@
 package com.redhat.patriot.network_simulator.example.image;
 
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.redhat.patriot.network_simulator.example.files.FileUtils;
+import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,15 +12,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
-public class DockerImage {
+/**
+ * Class representing DockerImage. Providing necessary functionality, like building and deleting images.
+ */
+public class DockerImage  implements Image{
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerImage.class);
 
-    private DockerClient dockerClient;
+    private DockerManager dockerManager;
 
-    public DockerImage(DockerClient dockerClient) {
-        this.dockerClient = dockerClient;
+    /**
+     * Instantiates a new Docker image.
+     *
+     * @param dockerManager the docker manager
+     */
+    public DockerImage(DockerManager dockerManager) {
+        this.dockerManager = dockerManager;
     }
 
+    /**
+     * Method providing image building and selecting right path for resource files.
+     * @param tag Set of image tags
+     * @param path Path for dockerfile
+     */
     public void buildImage(Set<String> tag, String path) {
 
         FileUtils fileUtils = new FileUtils();
@@ -29,8 +41,7 @@ public class DockerImage {
         if (dockerFile.exists()) {
 
             LOGGER.info("Looking in resources");
-            dockerClient.buildImageCmd(dockerFile)
-                    .withTags(tag).exec(new BuildImageResultCallback()).awaitImageId();
+            dockerManager.buildImage(dockerFile, tag);
 
         } else if (DockerImage.class.getClassLoader().getResourceAsStream(path) != null){
 
@@ -46,7 +57,7 @@ public class DockerImage {
 
                 script.setExecutable(true);
 
-                dockerClient.buildImageCmd(docker).withTags(tag).exec(new BuildImageResultCallback()).awaitImageId();
+                dockerManager.buildImage(docker, tag);
 
                 fileUtils.deleteDirWithFiles(tmpDir.toFile());
 
@@ -54,15 +65,24 @@ public class DockerImage {
                 e.printStackTrace();
             }
 
-
-
         } else {
             LOGGER.warn("DOCKERFILES does not exists");
             System.exit(0);
         }
     }
+
+    @Override
+    public void deleteImage(Set<String> tags) {
+
+    }
+
+    /**
+     * Delete image.
+     *
+     * @param imageTag the image tag
+     */
     public void deleteImage(String imageTag) {
-        dockerClient.removeImageCmd(imageTag).exec();
+        dockerManager.deleteImage(imageTag);
     }
 
 

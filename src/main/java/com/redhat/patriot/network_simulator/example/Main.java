@@ -5,7 +5,6 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.redhat.patriot.network_simulator.example.args.CommandLineParser;
 import com.redhat.patriot.network_simulator.example.cleanup.Cleaner;
-import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
@@ -14,11 +13,20 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 
+/**
+ * The type Main.
+ */
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     * @throws InterruptedException the interrupted exception
+     */
     public static void main(String[] args) throws InterruptedException {
-        DockerManager dockerManager = new DockerManager();
+        DockerController dockerController = new DockerController();
         CommandLineParser cmdArgs = new CommandLineParser();
         CmdLineParser parser = new CmdLineParser(cmdArgs);
 
@@ -32,12 +40,12 @@ public class Main {
             LOGGER.info("Cleaning docker.");
             DockerClient dockerClient = DockerClientBuilder.
                     getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
-            Cleaner cleaner = new Cleaner(dockerClient);
+            Cleaner cleaner = new Cleaner();
             cleaner.cleanUp(Arrays.asList("client_network", "server_network"),
                     Arrays.asList("comm_client", "comm_server", "router"));
         } else {
             LOGGER.info("Generating enviropment");
-            dockerManager.genererateEnviroment();
+            dockerController.genererateEnviroment();
         }
 
 

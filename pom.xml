@@ -37,7 +37,7 @@
    <developers>
       <developer>
          <id>obabec</id>
-         <email>ond.babec@gmail.com</email>
+         <email>obabec@redhat.com</email>
          <organization>Red Hat</organization>
          <name>Ondřej Babec</name>
          <roles>
@@ -182,7 +182,7 @@
                <id>validate</id>
                <phase>validate</phase>
                <configuration>
-                  <configLocation>checkstyle.xml</configLocation>
+                  <configLocation>../network-simulator-test/checkstyle.xml</configLocation>
                   <encoding>UTF-8</encoding>
                   <consoleOutput>true</consoleOutput>
                   <failsOnError>true</failsOnError>

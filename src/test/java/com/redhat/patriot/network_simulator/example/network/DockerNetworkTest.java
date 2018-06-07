@@ -2,28 +2,32 @@ package com.redhat.patriot.network_simulator.example.network;
 
 import com.github.dockerjava.api.model.Network;
 import com.redhat.patriot.network_simulator.example.TestClass;
+import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * The type Docker network test.
+ */
 class DockerNetworkTest extends TestClass {
 
+    /**
+     * Create network with subnet test.
+     */
     @Test
     void createNetworkWithSubnet() {
+        DockerManager dockerManager = new DockerManager();
+        DockerNetwork dockerNetwork = (DockerNetwork) dockerManager.createNetwork("test_network", "175.16.0.0/16");
 
-        DockerNetwork dockerNetwork = new DockerNetwork(dockerClient);
 
-        String networkName = "test_network";
-        dockerNetwork.createNetworkWithSubnet("175.16.0.0/16",
-                networkName);
-
-        List<Network> networks = dockerClient.listNetworksCmd().withNameFilter(networkName).exec();
+        List<Network> networks = dockerClient.listNetworksCmd().withNameFilter(dockerNetwork.getName()).exec();
 
         assertEquals(false, networks.isEmpty());
 
-        dockerNetwork.deleteNetwork(networkName);
+        dockerManager.destroyNetwork(dockerNetwork);
 
     }
 }

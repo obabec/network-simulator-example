@@ -3,7 +3,6 @@ package com.redhat.patriot.network_simulator.example.cleanup;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Network;
-import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

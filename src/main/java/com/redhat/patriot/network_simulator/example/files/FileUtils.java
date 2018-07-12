@@ -10,16 +10,17 @@ import java.io.InputStream;
 import java.nio.file.StandardCopyOption;
 
 /**
- *Class is providing utils for work with files and dirs.
+ * Class is providing utils for work with files and dirs.
  */
 public class FileUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
 
     /**
-     *Method converting input stream to file, returning file`s absolute path. Used especially for Dockerfile stream from
+     * Method converting input stream to file, returning file`s absolute path. Used especially for Dockerfile stream from
      * target jar package to tmp dirs...
+     *
      * @param inputStream stream of file content
-     * @param name name of created file
+     * @param name        name of created file
      * @return absolute path to created file
      */
     public String convertToFile(InputStream inputStream, String name) {
@@ -40,6 +41,7 @@ public class FileUtils {
 
     /**
      * Method provides deleting dir with all content inside.
+     *
      * @param dir target directory
      */
     public void deleteDirWithFiles(File dir) {

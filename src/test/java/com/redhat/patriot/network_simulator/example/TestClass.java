@@ -8,6 +8,9 @@ import com.github.dockerjava.core.DockerClientBuilder;
  * The type Test class.
  */
 public class TestClass {
+    /**
+     * The Docker client.
+     */
     protected DockerClient dockerClient = DockerClientBuilder.
             getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
 

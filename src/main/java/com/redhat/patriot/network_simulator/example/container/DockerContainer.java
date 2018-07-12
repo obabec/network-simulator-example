@@ -20,6 +20,16 @@ public class DockerContainer implements Container {
         return name;
     }
 
+    @Override
+    public String getIpAddress(String networkName) {
+        return null;
+    }
+
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -28,6 +38,11 @@ public class DockerContainer implements Container {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(String id) {
         this.id = id;
     }
@@ -56,10 +71,20 @@ public class DockerContainer implements Container {
         this.id = id;
     }
 
+    /**
+     * Gets manager.
+     *
+     * @return the manager
+     */
     public Manager getManager() {
         return dockerManager;
     }
 
+    /**
+     * Sets manager.
+     *
+     * @param manager the manager
+     */
     public void setManager(Manager manager) {
         this.dockerManager = (DockerManager) manager;
     }

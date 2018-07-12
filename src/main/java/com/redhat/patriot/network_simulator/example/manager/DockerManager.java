@@ -4,7 +4,9 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.CreateNetworkResponse;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
+import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.Network.Ipam;
+import com.github.dockerjava.api.model.NetworkSettings;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
@@ -25,10 +27,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class DockerManager implements Manager {
 
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerManager.class);
     private DockerClient dockerClient = DockerClientBuilder.
             getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
 
+    @Override
+    public String findIpAddress(Container container, Network network) {
+        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getName()).exec();
+        NetworkSettings netSettings = containerResponse.getNetworkSettings();
+
+        return netSettings.getNetworks().get(network.getName()).getIpAddress();
+    }
 
     @Override
     public Container createContainer(String name, String tag) {

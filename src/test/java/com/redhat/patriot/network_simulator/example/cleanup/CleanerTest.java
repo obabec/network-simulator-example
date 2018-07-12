@@ -43,7 +43,7 @@ class CleanerTest extends TestClass {
         List<String> conts = new ArrayList<>();
         conts.add(dockerContainer.getName());
 
-        cleaner.cleanUp(Arrays.asList(dockerContainer.getName()), Arrays.asList(dockerNetwork.getName()));
+        cleaner.cleanUp(Arrays.asList(dockerNetwork.getName()), Arrays.asList(dockerContainer.getName()));
 
         assertEquals((dockerContainer.exists() && dockerNetwork.exists(dockerManager)), false);
 

@@ -48,6 +48,8 @@ public class DockerController {
             Container router = dockerManager.createContainer("router",tagRouter);
             conts.add(connectAndStart(dockerManager, router, Arrays.asList(clientNetwork, serverNetwork)));
 
+            System.out.println(dockerManager.findIpAddress(router, serverNetwork));
+
             Container commClient = dockerManager.createContainer("comm_client", tagApp);
             conts.add(connectAndStart(dockerManager, commClient, Arrays.asList(clientNetwork)));
 
@@ -103,13 +105,11 @@ public class DockerController {
      */
     void setGW(Container client, Container server, List<String> networks, Container router){
 
-        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(router.getName()).exec();
-        NetworkSettings netSettings = containerResponse.getNetworkSettings();
-
         dockerManager.runCommand(server, "./setGW " +
-                netSettings.getNetworks().get(networks.get(0)).getIpAddress());
+                dockerManager.findIpAddress(router, new DockerNetwork(networks.get(0))));
 
         dockerManager.runCommand(client, "./setGW " +
-                netSettings.getNetworks().get(networks.get(1)).getIpAddress());
+                dockerManager.findIpAddress(router, new DockerNetwork(networks.get(1))));
+
     }
 }

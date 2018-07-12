@@ -19,6 +19,15 @@ public interface Manager {
     Container createContainer(String name, String tag);
 
     /**
+     * Find ip address string.
+     *
+     * @param container the container
+     * @param network   the network
+     * @return the string
+     */
+    String findIpAddress(Container container, Network network);
+
+    /**
      * Create network network.
      *
      * @param name   the name

@@ -18,6 +18,15 @@ public class DockerNetwork implements Network {
      * Instantiates a new Docker network.
      *
      * @param name the name
+     */
+    public DockerNetwork(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Instantiates a new Docker network.
+     *
+     * @param name the name
      * @param id   the id
      */
     public DockerNetwork(String name, String id) {

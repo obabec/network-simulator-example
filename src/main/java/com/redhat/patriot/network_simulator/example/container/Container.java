@@ -16,6 +16,14 @@ public interface Container {
     String getName();
 
     /**
+     * Gets ip address.
+     *
+     * @param networkName the network name
+     * @return the ip address
+     */
+    String getIpAddress(String networkName);
+
+    /**
      * Gets id.
      *
      * @return the id

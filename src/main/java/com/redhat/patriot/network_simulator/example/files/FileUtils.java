@@ -16,8 +16,8 @@ public class FileUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
 
     /**
-     * Method converting input stream to file, returning file`s absolute path. Used especially for Dockerfile stream from
-     * target jar package to tmp dirs...
+     * Method converting input stream to file, returning file`s absolute path. Used especially for Dockerfile stream
+     * from target jar package to tmp dirs...
      *
      * @param inputStream stream of file content
      * @param name        name of created file

@@ -1,8 +1,7 @@
 package com.redhat.patriot.network_simulator.example.image;
 
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.redhat.patriot.network_simulator.example.files.FileUtils;
+import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,15 +18,15 @@ import java.util.Set;
 public class DockerImage  implements Image{
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerImage.class);
 
-    private DockerClient dockerClient;
+    private DockerManager dockerManager;
 
     /**
      * Instantiates a new Docker image.
      *
-     * @param dockerClient the docker client
+     * @param dockerManager the docker manager
      */
-    public DockerImage(DockerClient dockerClient) {
-        this.dockerClient = dockerClient;
+    public DockerImage(DockerManager dockerManager) {
+        this.dockerManager = dockerManager;
     }
 
     /**
@@ -42,8 +41,7 @@ public class DockerImage  implements Image{
         if (dockerFile.exists()) {
 
             LOGGER.info("Looking in resources");
-            dockerClient.buildImageCmd(dockerFile)
-                    .withTags(tag).exec(new BuildImageResultCallback()).awaitImageId();
+            dockerManager.buildImage(dockerFile, tag);
 
         } else if (DockerImage.class.getClassLoader().getResourceAsStream(path) != null){
 
@@ -59,7 +57,7 @@ public class DockerImage  implements Image{
 
                 script.setExecutable(true);
 
-                dockerClient.buildImageCmd(docker).withTags(tag).exec(new BuildImageResultCallback()).awaitImageId();
+                dockerManager.buildImage(docker, tag);
 
                 fileUtils.deleteDirWithFiles(tmpDir.toFile());
 
@@ -84,7 +82,7 @@ public class DockerImage  implements Image{
      * @param imageTag the image tag
      */
     public void deleteImage(String imageTag) {
-        dockerClient.removeImageCmd(imageTag).exec();
+        dockerManager.deleteImage(imageTag);
     }
 
 

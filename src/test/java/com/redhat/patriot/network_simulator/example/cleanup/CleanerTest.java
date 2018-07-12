@@ -26,7 +26,7 @@ class CleanerTest extends TestClass {
     void cleanUp() {
         DockerManager dockerManager = new DockerManager();
         List<String> tags = Arrays.asList("testtag:01");
-        DockerImage dockerImage = new DockerImage(dockerClient);
+        DockerImage dockerImage = new DockerImage(dockerManager);
         dockerImage.buildImage(new HashSet<>(tags), "app/Dockerfile");
 
         DockerContainer dockerContainer =

@@ -18,10 +18,10 @@ public interface Container {
     /**
      * Gets ip address.
      *
-     * @param networkName the network name
+     * @param network the network
      * @return the ip address
      */
-    String getIpAddress(String networkName);
+    String getIpAddress(Network network);
 
     /**
      * Gets id.

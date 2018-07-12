@@ -1,8 +1,6 @@
 package com.redhat.patriot.network_simulator.example;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.InspectContainerResponse;
-import com.github.dockerjava.api.model.NetworkSettings;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.redhat.patriot.network_simulator.example.cleanup.Cleaner;
@@ -36,7 +34,7 @@ public class DockerController {
             String tagApp = "app_test:01";
             String tagRouter  = "router_test:01";
 
-            buildImages(tagApp, tagRouter, dockerClient);
+            buildImages(tagApp, tagRouter);
 
             DockerNetwork serverNetwork =
                     (DockerNetwork) dockerManager.createNetwork("server_network", "172.22.0.0/16");
@@ -85,10 +83,9 @@ public class DockerController {
      *
      * @param tagApp       the tag app
      * @param tagRouter    the tag router
-     * @param dockerClient the docker client
      */
-    void buildImages(String tagApp, String tagRouter, DockerClient dockerClient) {
-        DockerImage dockerImage = new DockerImage(dockerClient);
+    void buildImages(String tagApp, String tagRouter){
+        DockerImage dockerImage = new DockerImage(dockerManager);
         dockerImage.buildImage(new HashSet<>(Arrays.asList(tagApp)), "app/Dockerfile");
         dockerImage.buildImage(new HashSet<>(Arrays.asList(tagRouter)), "router/Dockerfile");
     }

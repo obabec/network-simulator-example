@@ -9,6 +9,7 @@ import com.github.dockerjava.api.model.Network.Ipam;
 import com.github.dockerjava.api.model.NetworkSettings;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import com.redhat.patriot.network_simulator.example.container.Container;
 import com.redhat.patriot.network_simulator.example.container.DockerContainer;
@@ -17,9 +18,11 @@ import com.redhat.patriot.network_simulator.example.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,6 +41,16 @@ public class DockerManager implements Manager {
         NetworkSettings netSettings = containerResponse.getNetworkSettings();
 
         return netSettings.getNetworks().get(network.getName()).getIpAddress();
+    }
+
+    @Override
+    public void buildImage(File dockerfile, Set<String> tag) {
+        dockerClient.buildImageCmd(dockerfile).withTags(tag).exec(new BuildImageResultCallback()).awaitImageId();
+    }
+
+    @Override
+    public void deleteImage(String tag) {
+        dockerClient.removeImageCmd(tag).exec();
     }
 
     @Override
@@ -106,6 +119,13 @@ public class DockerManager implements Manager {
      */
     @Override
     public void destroyContainer(Container container) {
+        List<com.github.dockerjava.api.model.Container> outputCont = dockerClient.listContainersCmd().withShowAll(true).
+                withNameFilter(Arrays.asList(container.getName())).exec();
+
+        if (!outputCont.get(0).getStatus().contains("Exited") && !outputCont.get(0).getStatus().contains("Created")) {
+            dockerClient.killContainerCmd(container.getId()).exec();
+        }
+
         dockerClient.removeContainerCmd(container.getName()).exec();
     }
 

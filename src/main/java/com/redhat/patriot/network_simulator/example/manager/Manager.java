@@ -3,7 +3,9 @@ package com.redhat.patriot.network_simulator.example.manager;
 import com.redhat.patriot.network_simulator.example.container.Container;
 import com.redhat.patriot.network_simulator.example.network.Network;
 
+import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The interface Manager.
@@ -86,5 +88,20 @@ public interface Manager {
      * @param container the container
      */
     void startContainer(Container container);
+
+    /**
+     * Build image.
+     *
+     * @param dockerfile the dockerfile
+     * @param tag        the tag
+     */
+    void buildImage(File dockerfile, Set<String> tag);
+
+    /**
+     * Delete image.
+     *
+     * @param tag the tag
+     */
+    void deleteImage(String tag);
 
 }

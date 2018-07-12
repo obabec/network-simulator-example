@@ -30,7 +30,7 @@ class DockerContTest extends TestClass {
 
         DockerManager dockerManager = new DockerManager();
 
-        DockerImage dockerImage = new DockerImage(dockerClient);
+        DockerImage dockerImage = new DockerImage(dockerManager);
 
         List<String> tags = Arrays.asList("testtag:02");
         List<String> nameOfCont = Arrays.asList("test_cont");
@@ -53,7 +53,7 @@ class DockerContTest extends TestClass {
 
         List<String> tags = Arrays.asList("test_tag:01");
         DockerManager dockerManager = new DockerManager();
-        DockerImage dockerImage = new DockerImage(dockerClient);
+        DockerImage dockerImage = new DockerImage(dockerManager);
         dockerImage.buildImage(new HashSet<>(tags), "router/Dockerfile");
 
         DockerContainer dockerCont = (DockerContainer) dockerManager

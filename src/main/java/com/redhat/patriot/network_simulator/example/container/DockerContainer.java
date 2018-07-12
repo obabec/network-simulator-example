@@ -21,8 +21,8 @@ public class DockerContainer implements Container {
     }
 
     @Override
-    public String getIpAddress(String networkName) {
-        return null;
+    public String getIpAddress(Network network) {
+        return dockerManager.findIpAddress(this, network);
     }
 
     /**

@@ -5,8 +5,10 @@ import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.CreateNetworkResponse;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Network.Ipam;
 import com.github.dockerjava.api.model.NetworkSettings;
+import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
@@ -58,6 +60,20 @@ public class DockerManager implements Manager {
         LOGGER.info("Started creating container");
         CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
                 .withPrivileged(true)
+                .withCmd()
+                .withName(name)
+                .exec();
+        LOGGER.info("Container created with id: " + containerResponse.getId());
+        return new DockerContainer(name, containerResponse.getId(), new DockerManager());
+    }
+
+    public Container createContainer(String name, String tag, String volumePath, String bindPath) {
+        LOGGER.info("Starting creating container with volume " + volumePath);
+        Volume volume = new Volume(volumePath);
+        CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
+                .withPrivileged(true)
+                .withVolumes(volume)
+                .withBinds(new Bind(bindPath, volume))
                 .withCmd()
                 .withName(name)
                 .exec();

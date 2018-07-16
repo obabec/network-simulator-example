@@ -1,6 +1,10 @@
 package com.redhat.patriot.network_simulator.example.container;
 
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
 import com.redhat.patriot.network_simulator.example.TestClass;
 import com.redhat.patriot.network_simulator.example.image.DockerImage;
 import com.redhat.patriot.network_simulator.example.manager.DockerManager;
@@ -15,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The type Docker cont test.
@@ -71,5 +77,25 @@ class DockerContTest extends TestClass {
         dockerManager.destroyContainer(dockerCont);
         dockerManager.destroyNetwork(dockerNetwork);
         dockerImage.deleteImage(tags.get(0));
+    }
+
+    @Test
+    public void TestVolume() {
+        DockerClient dockerClient = DockerClientBuilder.
+                getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
+        DockerManager dockerManager = new DockerManager();
+        DockerImage dockerImage = new DockerImage(dockerManager);
+        String tag = "volume_test:01";
+        dockerImage.buildImage(new HashSet<>(Arrays.asList(tag)), "app/Dockerfile");
+        String volume = "/opt/app";
+        String bind = "app";
+        DockerContainer dockerContainer =
+                (DockerContainer) dockerManager.createContainer("volume_test", tag, volume, bind);
+        dockerManager.startContainer(dockerContainer);
+
+        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(dockerContainer.getId()).exec();
+        assertFalse(containerResponse.getMounts().isEmpty());
+        dockerContainer.destroyContainer();
+
     }
 }

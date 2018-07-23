@@ -29,6 +29,4 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /
-ADD setGW setGW
-RUN ["chmod", "+x", "/setGW"]
 CMD ["/sbin/my_init"]

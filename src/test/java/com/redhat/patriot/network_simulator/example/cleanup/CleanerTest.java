@@ -1,12 +1,14 @@
 package com.redhat.patriot.network_simulator.example.cleanup;
 
+import com.redhat.patriot.network_simulator.example.DockerfileGenerator;
 import com.redhat.patriot.network_simulator.example.TestClass;
 import com.redhat.patriot.network_simulator.example.container.DockerContainer;
-import com.redhat.patriot.network_simulator.example.image.DockerImage;
+import com.redhat.patriot.network_simulator.example.image.docker.DockerImage;
 import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import com.redhat.patriot.network_simulator.example.network.DockerNetwork;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +29,9 @@ class CleanerTest extends TestClass {
         DockerManager dockerManager = new DockerManager();
         List<String> tags = Arrays.asList("testtag:01");
         DockerImage dockerImage = new DockerImage(dockerManager);
-        dockerImage.buildImage(new HashSet<>(tags), "app/Dockerfile");
+        DockerfileGenerator dockerfileGenerator = new DockerfileGenerator();
+        Path dockerfile = dockerfileGenerator.createAndGenerateDockerfile();
+        dockerImage.buildImage(new HashSet<>(tags), dockerfile.toAbsolutePath().toString());
 
         DockerContainer dockerContainer =
                 (DockerContainer) dockerManager.createContainer("test_cont", tags.get(0));
@@ -46,6 +50,6 @@ class CleanerTest extends TestClass {
         cleaner.cleanUp(Arrays.asList(dockerNetwork.getName()), Arrays.asList(dockerContainer.getName()));
 
         assertEquals((dockerContainer.exists() && dockerNetwork.exists(dockerManager)), false);
-
+        dockerfileGenerator.deleteDir();
     }
 }

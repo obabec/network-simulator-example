@@ -5,7 +5,7 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.redhat.patriot.network_simulator.example.cleanup.Cleaner;
 import com.redhat.patriot.network_simulator.example.container.Container;
-import com.redhat.patriot.network_simulator.example.image.DockerImage;
+import com.redhat.patriot.network_simulator.example.image.docker.DockerImage;
 import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import com.redhat.patriot.network_simulator.example.network.DockerNetwork;
 import com.redhat.patriot.network_simulator.example.network.Network;

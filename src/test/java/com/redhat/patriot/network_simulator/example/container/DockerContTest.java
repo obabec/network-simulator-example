@@ -6,7 +6,8 @@ import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.redhat.patriot.network_simulator.example.TestClass;
-import com.redhat.patriot.network_simulator.example.image.DockerImage;
+import com.redhat.patriot.network_simulator.example.DockerfileGenerator;
+import com.redhat.patriot.network_simulator.example.image.docker.DockerImage;
 import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import com.redhat.patriot.network_simulator.example.network.DockerNetwork;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -40,8 +42,9 @@ class DockerContTest extends TestClass {
 
         List<String> tags = Arrays.asList("testtag:02");
         List<String> nameOfCont = Arrays.asList("test_cont");
-
-        dockerImage.buildImage(new HashSet<>(tags), "router/Dockerfile");
+        DockerfileGenerator testDockerfileGenerator = new DockerfileGenerator();
+        Path dockerfile = testDockerfileGenerator.createAndGenerateDockerfile();
+        dockerImage.buildImage(new HashSet<>(tags), dockerfile.toAbsolutePath().toString());
         DockerContainer dockerCont = (DockerContainer) dockerManager.createContainer("test_cont", "testtag:02");
 
         List<Container> outputConts = dockerClient.listContainersCmd().withShowAll(true)
@@ -49,6 +52,7 @@ class DockerContTest extends TestClass {
 
         assertEquals(false, outputConts.isEmpty());
         dockerManager.destroyContainer(dockerCont);
+        testDockerfileGenerator.deleteDir();
     }
 
     /**
@@ -60,7 +64,9 @@ class DockerContTest extends TestClass {
         List<String> tags = Arrays.asList("test_tag:01");
         DockerManager dockerManager = new DockerManager();
         DockerImage dockerImage = new DockerImage(dockerManager);
-        dockerImage.buildImage(new HashSet<>(tags), "router/Dockerfile");
+        DockerfileGenerator testDockerfileGenerator = new DockerfileGenerator();
+        Path dockerfile = testDockerfileGenerator.createAndGenerateDockerfile();
+        dockerImage.buildImage(new HashSet<>(tags), dockerfile.toAbsolutePath().toString());
 
         DockerContainer dockerCont = (DockerContainer) dockerManager
                 .createContainer("test_cont", tags.get(0));
@@ -90,7 +96,9 @@ class DockerContTest extends TestClass {
         DockerManager dockerManager = new DockerManager();
         DockerImage dockerImage = new DockerImage(dockerManager);
         String tag = "volume_test:01";
-        dockerImage.buildImage(new HashSet<>(Arrays.asList(tag)), "app/Dockerfile");
+        DockerfileGenerator dockerfileGenerator = new DockerfileGenerator();
+        Path dockerfile = dockerfileGenerator.createAndGenerateDockerfile();
+        dockerImage.buildImage(new HashSet<>(Arrays.asList(tag)), dockerfile.toAbsolutePath().toString());
         String volume = "/opt/app";
         String bind = "app";
         DockerContainer dockerContainer =
@@ -100,5 +108,6 @@ class DockerContTest extends TestClass {
         InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(dockerContainer.getId()).exec();
         assertFalse(containerResponse.getMounts().isEmpty());
         dockerContainer.destroyContainer();
+        dockerfileGenerator.deleteDir();
     }
 }

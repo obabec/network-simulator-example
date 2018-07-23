@@ -8,7 +8,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q python-software-propert
 
 RUN apt-get update \
     && apt-get install -y traceroute iptables curl dnsutils \
-                          net-tools \
+                          net-tools git\
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /

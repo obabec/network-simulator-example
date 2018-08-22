@@ -3,20 +3,23 @@ package com.redhat.patriot.network_simulator.example.container.config;
 public class AppConfig {
     private String ipadd;
     private String status;
-    private String containerId;
+    private String name;
+    private String startCommand;
 
-    public String getContainerId() {
-        return containerId;
+    public String getName() {
+        return name;
     }
 
-    public void setContainerId(String containerId) {
-        this.containerId = containerId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public AppConfig(String ipadd, String status, String containerId) {
-        this.ipadd = ipadd;
-        this.status = status;
-        this.containerId = containerId;
+    public String getStartCommand() {
+        return startCommand;
+    }
+
+    public void setStartCommand(String startCommand) {
+        this.startCommand = startCommand;
     }
 
     public String getStatus() {
@@ -27,13 +30,19 @@ public class AppConfig {
         this.status = status;
     }
 
-    public AppConfig(String ipadd, String status) {
-        this.ipadd = ipadd;
-        this.status = status;
+
+    public AppConfig(String name, String startCommand) {
+        this.name = name;
+        this.startCommand = startCommand;
     }
 
-    public AppConfig(String ipadd) {
+    public AppConfig(String ipadd, String status, String name) {
         this.ipadd = ipadd;
+        this.status = status;
+        this.name = name;
+    }
+    public AppConfig(String name) {
+        this.name = name;
     }
 
     public String getIpadd() {

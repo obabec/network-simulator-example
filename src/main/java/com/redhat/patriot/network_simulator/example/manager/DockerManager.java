@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * Class providing connection between Patriot api and java-docker api.
@@ -43,6 +44,13 @@ public class DockerManager implements Manager {
         NetworkSettings netSettings = containerResponse.getNetworkSettings();
 
         return netSettings.getNetworks().get(network.getName()).getIpAddress();
+    }
+
+    public String findIpAddress(Container container) {
+        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getName()).exec();
+        NetworkSettings netSettings = containerResponse.getNetworkSettings();
+
+        return netSettings.getIpAddress();
     }
 
     @Override
@@ -144,14 +152,28 @@ public class DockerManager implements Manager {
      */
     @Override
     public void destroyContainer(Container container) {
-        List<com.github.dockerjava.api.model.Container> outputCont = dockerClient.listContainersCmd().withShowAll(true).
-                withNameFilter(Arrays.asList(container.getName())).exec();
+        List<com.github.dockerjava.api.model.Container> outputCont;
 
-        if (!outputCont.get(0).getStatus().contains("Exited") && !outputCont.get(0).getStatus().contains("Created")) {
-            dockerClient.killContainerCmd(container.getId()).exec();
+        if (container.getId() == null || container.getId().isEmpty()) {
+            outputCont = dockerClient.listContainersCmd().withShowAll(true)
+                .withNameFilter(Arrays.asList(container.getName())).exec();
+        } else {
+            outputCont = dockerClient.listContainersCmd().withShowAll(true)
+                    .withIdFilter(Arrays.asList(container.getId())).exec();
         }
 
-        dockerClient.removeContainerCmd(container.getName()).exec();
+        if (!outputCont.isEmpty() && !outputCont.isEmpty()) {
+
+            if (!outputCont.get(0).getStatus().contains("Exited") &&
+                    !outputCont.get(0).getStatus().contains("Created")) {
+                dockerClient.killContainerCmd(container.getId()).exec();
+            }
+            dockerClient.removeContainerCmd(outputCont.get(0).getNames()[0])
+                    .withContainerId(outputCont.get(0).getId()).exec();
+        } else {
+            throw new NullPointerException("Container not found!");
+        }
+
     }
 
     /**
@@ -194,6 +216,78 @@ public class DockerManager implements Manager {
     public void startContainer(Container container) {
         LOGGER.info("Starting container");
         dockerClient.startContainerCmd(container.getName()).exec();
+    }
+
+    public String getDefaultGwNetworkIp(Container container) {
+        String ip = dockerClient.inspectContainerCmd(container.getName())
+                .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();
+        int mask = dockerClient.inspectContainerCmd(container.getName())
+                .withContainerId(container.getId()).exec().getNetworkSettings().getIpPrefixLen();
+        return convertToNetworkIp(ip, mask);
+    }
+
+     private String convertToNetworkIp(String ip, int mask) {
+        String[] s = ip.split(Pattern.quote("."));
+        ArrayList<String> binIp = new ArrayList<>(4);
+         for (String octet : s) {
+             binIp.add(Integer.toBinaryString(Integer.parseInt(octet)));
+         }
+
+         completeByte(binIp);
+         ArrayList<String> binMask = convertCidrToBinMask(mask);
+         completeByte(binMask);
+         String networkIp = "";
+
+         for (int i = 0; i < 4; i++) {
+             String binNetworkIp = "";
+             for (int y = 0; y < 8; y++) {
+                binNetworkIp += Integer.parseInt(binIp.get(i).charAt(y) + "") &
+                        Integer.parseInt(binMask.get(i).charAt(y) + "");
+            }
+             networkIp += String.valueOf(Integer.parseInt(binNetworkIp, 2));
+            if (i != 3) {
+                networkIp += ".";
+            }
+         }
+         return networkIp;
+    }
+
+    private ArrayList<String> convertCidrToBinMask(int mask) {
+        ArrayList<String> binMask = new ArrayList<>(4);
+        String p = "";
+        for (int i = 1; i <= 32; i++) {
+            if (mask != 0) {
+                p += "1";
+                mask--;
+            }
+            if (i % 8 == 0) {
+                binMask.add(p);
+                p = "";
+            }
+        }
+        completeByte(binMask);
+
+        return binMask;
+    }
+
+    private void completeByte(ArrayList<String> ip) {
+        for (int i = 0; i < 4; i++) {
+            String zeroBites = "";
+            for (int y = ip.get(i).length(); y < 8; y++) {
+                zeroBites += "0";
+            }
+            ip.set(i, zeroBites + ip.get(i));
+        }
+    }
+
+    public Integer getDefaultGwNetworkMask(Container container) {
+         return dockerClient.inspectContainerCmd(container.getName()).withContainerId(container.getId())
+                .exec().getNetworkSettings().getIpPrefixLen();
+    }
+
+
+    public void delDefaultGateway(DockerContainer container) {
+        this.runCommand(container, "ip route del default");
     }
 
 

@@ -22,12 +22,38 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The type Docker cont test.
  */
 class DockerContTest extends TestClass {
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerContTest.class);
+
+    @Test
+    void destroyContainer() {
+        DockerManager dockerManager = new DockerManager();
+
+        DockerImage dockerImage = new DockerImage(dockerManager);
+
+        List<String> tags = Arrays.asList("testtag:02");
+        List<String> nameOfCont = Arrays.asList("test_cont", "test_cont_id");
+        DockerfileGenerator testDockerfileGenerator = new DockerfileGenerator();
+        Path dockerfile = testDockerfileGenerator.createAndGenerateDockerfile();
+        dockerImage.buildImage(new HashSet<>(tags), dockerfile.toAbsolutePath().toString());
+
+        DockerContainer dockerCont = (DockerContainer) dockerManager.createContainer("test_cont", "testtag:02");
+        DockerContainer dockerContId = (DockerContainer) dockerManager.createContainer("test_cont_id", "testtag:02");
+        DockerContainer destroyContId = new DockerContainer(dockerContId.getId());
+        dockerManager.destroyContainer(dockerCont);
+        dockerManager.destroyContainer(destroyContId);
+
+        List<Container> outputConts = dockerClient.listContainersCmd().withShowAll(true)
+                .withNameFilter(nameOfCont).exec();
+
+        assertTrue(outputConts.isEmpty());
+
+    }
 
     /**
      * Create container test.

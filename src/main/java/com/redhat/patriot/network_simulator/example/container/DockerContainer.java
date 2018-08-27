@@ -38,6 +38,10 @@ public class DockerContainer implements Container {
         return id;
     }
 
+    public DockerContainer(String id) {
+        this.id = id;
+    }
+
     /**
      * Sets id.
      *
@@ -131,6 +135,14 @@ public class DockerContainer implements Container {
     @Override
     public void destroyContainer() {
         dockerManager.destroyContainer(this);
+    }
+
+    public String getGatewayNetworkIp() {
+        return dockerManager.getDefaultGwNetworkIp(this);
+    }
+
+    public Integer getGatewayNetworkMask() {
+        return dockerManager.getDefaultGwNetworkMask(this);
     }
 
 }

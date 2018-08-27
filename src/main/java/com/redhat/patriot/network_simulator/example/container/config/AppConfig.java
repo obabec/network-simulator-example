@@ -45,11 +45,11 @@ public class AppConfig {
         this.name = name;
     }
 
-    public String getIpadd() {
+    public String getIPAdd() {
         return ipadd;
     }
 
-    public void setIpadd(String ipadd) {
-        this.ipadd = ipadd;
+    public void setIPAdd(String IPAdd) {
+        this.ipadd = IPAdd;
     }
 }

@@ -20,7 +20,7 @@ public class DockerEnvCmd implements DockerFilePart{
      * @param var       the var
      */
     public void setRequest(String nameOfVar, String var) {
-        setRequest(plainLine + " " + var);
+        setRequest(nameOfVar + " " + var);
     }
 
     @Override

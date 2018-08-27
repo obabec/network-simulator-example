@@ -38,6 +38,10 @@ public class DockerContainer implements Container {
         return id;
     }
 
+    public DockerContainer(String id) {
+        this.id = id;
+    }
+
     /**
      * Sets id.
      *

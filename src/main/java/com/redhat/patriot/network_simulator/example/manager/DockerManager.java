@@ -45,6 +45,13 @@ public class DockerManager implements Manager {
         return netSettings.getNetworks().get(network.getName()).getIpAddress();
     }
 
+    public String findIpAddress(Container container) {
+        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getName()).exec();
+        NetworkSettings netSettings = containerResponse.getNetworkSettings();
+
+        return netSettings.getIpAddress();
+    }
+
     @Override
     public void buildImage(File dockerfile, Set<String> tag) {
         dockerClient.buildImageCmd(dockerfile).withTags(tag).exec(new BuildImageResultCallback()).awaitImageId();
@@ -144,14 +151,28 @@ public class DockerManager implements Manager {
      */
     @Override
     public void destroyContainer(Container container) {
-        List<com.github.dockerjava.api.model.Container> outputCont = dockerClient.listContainersCmd().withShowAll(true).
-                withNameFilter(Arrays.asList(container.getName())).exec();
+        List<com.github.dockerjava.api.model.Container> outputCont;
 
-        if (!outputCont.get(0).getStatus().contains("Exited") && !outputCont.get(0).getStatus().contains("Created")) {
-            dockerClient.killContainerCmd(container.getId()).exec();
+        if (container.getId() == null || container.getId().isEmpty()) {
+            outputCont = dockerClient.listContainersCmd().withShowAll(true)
+                .withNameFilter(Arrays.asList(container.getName())).exec();
+        } else {
+            outputCont = dockerClient.listContainersCmd().withShowAll(true)
+                    .withIdFilter(Arrays.asList(container.getId())).exec();
         }
 
-        dockerClient.removeContainerCmd(container.getName()).exec();
+        if (!outputCont.isEmpty() && !outputCont.isEmpty()) {
+
+            if (!outputCont.get(0).getStatus().contains("Exited") &&
+                    !outputCont.get(0).getStatus().contains("Created")) {
+                dockerClient.killContainerCmd(container.getId()).exec();
+            }
+            dockerClient.removeContainerCmd(outputCont.get(0).getNames()[0])
+                    .withContainerId(outputCont.get(0).getId()).exec();
+        } else {
+            throw new NullPointerException("Container not found!");
+        }
+
     }
 
     /**

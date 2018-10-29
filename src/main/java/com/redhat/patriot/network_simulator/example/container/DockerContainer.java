@@ -137,4 +137,12 @@ public class DockerContainer implements Container {
         dockerManager.destroyContainer(this);
     }
 
+    public String getGatewayNetworkIp() {
+        return dockerManager.getDefaultGwNetworkIp(this);
+    }
+
+    public Integer getGatewayNetworkMask() {
+        return dockerManager.getDefaultGwNetworkMask(this);
+    }
+
 }

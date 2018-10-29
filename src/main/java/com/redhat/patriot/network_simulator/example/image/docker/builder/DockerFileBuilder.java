@@ -1,7 +1,14 @@
 package com.redhat.patriot.network_simulator.example.image.docker.builder;
 
 import com.redhat.patriot.network_simulator.example.image.Builder;
-import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.*;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerAddCmd;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerCmdCmd;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerEntryCmd;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerEnvCmd;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerFilePart;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerFromCmd;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerRunCmd;
+import com.redhat.patriot.network_simulator.example.image.docker.builder.parts.DockerWorkCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

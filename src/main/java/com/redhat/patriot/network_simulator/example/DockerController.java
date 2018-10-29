@@ -5,11 +5,14 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.redhat.patriot.network_simulator.example.cleanup.Cleaner;
 import com.redhat.patriot.network_simulator.example.container.Container;
+import com.redhat.patriot.network_simulator.example.container.DockerContainer;
+import com.redhat.patriot.network_simulator.example.files.FileUtils;
 import com.redhat.patriot.network_simulator.example.image.docker.DockerImage;
 import com.redhat.patriot.network_simulator.example.manager.DockerManager;
 import com.redhat.patriot.network_simulator.example.network.DockerNetwork;
 import com.redhat.patriot.network_simulator.example.network.Network;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,17 +35,16 @@ public class DockerController {
         try {
             DockerManager dockerManager = new DockerManager();
             String tagApp = "app_test:01";
-            String tagRouter  = "router_test:01";
+            String tagRouter  = "router_iproute:01";
 
             buildImages(tagApp, tagRouter);
 
             DockerNetwork serverNetwork =
-                    (DockerNetwork) dockerManager.createNetwork("server_network", "172.22.0.0/16");
+                    (DockerNetwork) dockerManager.createNetwork("server_network", "172.28.0.0/16");
             networks.add(serverNetwork.getName());
             DockerNetwork clientNetwork =
-                    (DockerNetwork) dockerManager.createNetwork("client_network", "172.23.0.0/16");
+                    (DockerNetwork) dockerManager.createNetwork("client_network", "172.29.0.0/16");
             networks.add(clientNetwork.getName());
-
             Container router = dockerManager.createContainer("router",tagRouter);
             conts.add(connectAndStart(dockerManager, router, Arrays.asList(clientNetwork, serverNetwork)));
 
@@ -54,7 +56,9 @@ public class DockerController {
             Container commServer = dockerManager.createContainer("comm_server", tagApp);
             conts.add(connectAndStart(dockerManager, commServer, Arrays.asList(serverNetwork)));
 
-            setGW(commClient, commServer, networks, router);
+            DockerContainer c = (DockerContainer) commServer;
+            String s = c.getGatewayNetworkIp();
+            int i = 0;
 
         } catch (Exception e ) {
             e.printStackTrace();
@@ -85,28 +89,15 @@ public class DockerController {
      * @param tagRouter the tag router
      */
     void buildImages(String tagApp, String tagRouter){
+
+        FileUtils fileUtils = new FileUtils();
         DockerImage dockerImage = new DockerImage(dockerManager);
-        dockerImage.buildImage(new HashSet<>(Arrays.asList(tagApp)), "app/Dockerfile");
-        dockerImage.buildImage(new HashSet<>(Arrays.asList(tagRouter)), "router/Dockerfile");
+        try {
+            dockerImage.buildAppImage(new HashSet<>(Arrays.asList(tagApp)));
+            dockerImage.buildRouterImage(new HashSet<>(Arrays.asList(tagRouter)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-
-    /**
-     * Setting default gw targeted to router`s ip, to provide communication only in simulated network without route to
-     * outside world.
-     *
-     * @param client   the client
-     * @param server   the server
-     * @param networks the networks
-     * @param router   the router
-     */
-    void setGW(Container client, Container server, List<String> networks, Container router){
-
-        dockerManager.runCommand(server, "./setGW " +
-                dockerManager.findIpAddress(router, new DockerNetwork(networks.get(0))));
-
-        dockerManager.runCommand(client, "./setGW " +
-                dockerManager.findIpAddress(router, new DockerNetwork(networks.get(1))));
-
-    }
 }

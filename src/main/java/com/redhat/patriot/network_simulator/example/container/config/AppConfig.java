@@ -49,7 +49,7 @@ public class AppConfig {
         return ipadd;
     }
 
-    public void setIPAdd(String IPAdd) {
-        this.ipadd = IPAdd;
+    public void setIPAdd(String ipadd) {
+        this.ipadd = ipadd;
     }
 }

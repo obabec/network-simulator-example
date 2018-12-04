@@ -21,17 +21,10 @@ public class DockerCmdCmd implements DockerFilePart {
      * @param commandWithArgs the command with args
      */
     public void setRequest(List<String> commandWithArgs) {
-        String commandLine = "[";
-        int sizeOf = commandWithArgs.size();
-        for (int i = 0; i < sizeOf; i++) {
-            if (i != (sizeOf - 1)) {
-                commandLine = commandLine + '"' + commandWithArgs.get(i) + '"' + ", ";
-            } else {
-                commandLine = commandLine + '"' + commandWithArgs.get(i) + '"' + "]";
-            }
-        }
-        setRequest(commandLine);
+        DockerExecFormTranslate dockerExecFormTranslate = new DockerExecFormTranslate();
+        setRequest(dockerExecFormTranslate.translateToExecForm(commandWithArgs));
     }
+
 
     @Override
     public String translate() {

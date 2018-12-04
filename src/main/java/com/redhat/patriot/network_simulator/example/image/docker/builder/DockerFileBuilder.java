@@ -158,4 +158,16 @@ public class DockerFileBuilder implements Builder {
         return this;
     }
 
+    /**
+     * Entrypoint docker file builder with exec form.
+     *
+     * @param entrypoint
+     * @return
+     */
+    public DockerFileBuilder entrypoint(List<String> entrypoint) {
+        DockerFilePart entryDockerFilePart = new DockerEntryCmd();
+        ((DockerEntryCmd) entryDockerFilePart).setRequest(entrypoint);
+        fileContent.add(entryDockerFilePart);
+        return this;
+    }
 }

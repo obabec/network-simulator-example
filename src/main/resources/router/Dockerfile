@@ -18,7 +18,8 @@ tar -xvf go1.9.1.linux-amd64.tar.gz && \
 mv go /usr/local
 ENV PATH $PATH:/usr/local/go/bin
 RUN pip install pyroute2 && \
-pip install flask
+pip install flask && \
+pip install -U jsonpickle
 RUN git clone https://github.com/obabec/iproute-rest.git
 WORKDIR /iproute-rest
 RUN git pull --force

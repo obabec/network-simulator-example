@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
-   <groupId>com.redhat.patriot</groupId>
+   <groupId>io.patriot_framework</groupId>
    <artifactId>network-sample</artifactId>
    <version>2.0-SNAPSHOT</version>
 
@@ -156,7 +156,7 @@
                </execution>
             </executions>
             <configuration>
-               <mainClass>com.redhat.patriot.network_simulator.example.Main</mainClass>
+               <mainClass>io.patriot_framework.network_simulator.example.Main</mainClass>
                <cleanupDaemonThreads>false</cleanupDaemonThreads>
             </configuration>
          </plugin>
@@ -165,7 +165,7 @@
             <configuration>
                <archive>
                   <manifest>
-                     <mainClass>com.redhat.patriot.network_simulator.example.Main</mainClass>
+                     <mainClass>io.patriot_framework.network_simulator.example.Main</mainClass>
                   </manifest>
                </archive>
                <descriptorRefs>

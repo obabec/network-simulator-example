@@ -103,7 +103,7 @@ public class DockerContainer implements Container {
     }
 
     /**
-     * Method returning if is container alive.
+     * Method returns if is container alive.
      * @return
      */
     @Override
@@ -119,7 +119,7 @@ public class DockerContainer implements Container {
     }
 
     /**
-     * Method providing connection with networks.
+     * Method provides connecting container to networks.
      * @param networks
      */
     @Override
@@ -137,10 +137,18 @@ public class DockerContainer implements Container {
         dockerManager.destroyContainer(this);
     }
 
+    /**
+     * Method gathers ip of container's gateway.
+     * @return String Ip address of container gateway
+     */
     public String getGatewayNetworkIp() {
         return dockerManager.getDefaultGwNetworkIp(this);
     }
 
+    /**
+     * Method gathers CIDR mask of container's gateway.
+     * @return Integer CIDR mask of container gateway.
+     */
     public Integer getGatewayNetworkMask() {
         return dockerManager.getDefaultGwNetworkMask(this);
     }

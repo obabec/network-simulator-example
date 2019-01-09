@@ -221,12 +221,31 @@ public class DockerManager implements Manager {
     public String getDefaultGwNetworkIp(Container container) {
         String ip = dockerClient.inspectContainerCmd(container.getName())
                 .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();
-        int mask = dockerClient.inspectContainerCmd(container.getName())
-                .withContainerId(container.getId()).exec().getNetworkSettings().getIpPrefixLen();
+        int mask = getDefaultGwNetworkMask(container);
         return convertToNetworkIp(ip, mask);
     }
 
-     private String convertToNetworkIp(String ip, int mask) {
+    /**
+     * Method gathers gateway's network mask.
+     * @param container
+     * @return
+     */
+    public Integer getDefaultGwNetworkMask(Container container) {
+        return dockerClient.inspectContainerCmd(container.getName()).withContainerId(container.getId())
+                .exec().getNetworkSettings().getIpPrefixLen();
+    }
+
+    /**
+     * Method converts host ip address to ip address of network or subnet.
+     * Docker api doesn't store ip address of network in containers config so
+     * we have to convert it from container's ip and mask. Convert uses logic
+     * AND function.
+     *
+     * @param ip IP Address of container in target network.
+     * @param mask mask of containers ip addres in target network.
+     * @return Network IP Address
+     */
+    private String convertToNetworkIp(String ip, int mask) {
         String[] s = ip.split(Pattern.quote("."));
         ArrayList<String> binIp = new ArrayList<>(4);
          for (String octet : s) {
@@ -252,6 +271,12 @@ public class DockerManager implements Manager {
          return networkIp;
     }
 
+    /**
+     * Method converts CIDR mask to binary mask (16 -> 11111111 11111111 00000000 00000000).
+     * Binary mask is used for converting host ip to network ip.
+     * @param mask CIDR mask
+     * @return ArrayList with binary mask (each index is 1 bit)
+     */
     private ArrayList<String> convertCidrToBinMask(int mask) {
         ArrayList<String> binMask = new ArrayList<>(4);
         String p = "";
@@ -270,20 +295,20 @@ public class DockerManager implements Manager {
         return binMask;
     }
 
-    private void completeByte(ArrayList<String> ip) {
+    /**
+     * Method completes byte with zero bites. Cooperates with convertCidrToBinMask method.
+     * @param binMask ArrayList with binary mask
+     */
+    private void completeByte(ArrayList<String> binMask) {
         for (int i = 0; i < 4; i++) {
             String zeroBites = "";
-            for (int y = ip.get(i).length(); y < 8; y++) {
+            for (int y = binMask.get(i).length(); y < 8; y++) {
                 zeroBites += "0";
             }
-            ip.set(i, zeroBites + ip.get(i));
+            binMask.set(i, zeroBites + binMask.get(i));
         }
     }
 
-    public Integer getDefaultGwNetworkMask(Container container) {
-         return dockerClient.inspectContainerCmd(container.getName()).withContainerId(container.getId())
-                .exec().getNetworkSettings().getIpPrefixLen();
-    }
 
 
     public void delDefaultGateway(DockerContainer container) {

@@ -129,7 +129,7 @@ public class DockerFileBuilder implements Builder {
     }
 
     /**
-     * Write docker file builder.
+     * Write created Dockerfile into temporary file.
      *
      * @param filePath the file path
      * @return the docker file builder

@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 /**
- * Class representing DockerImage. Providing necessary functionality, like building and deleting images.
+ * Class represents DockerImage. Providing necessary functionality, like building and deleting images.
  */
 public class DockerImage  implements Image {
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerImage.class);
@@ -35,7 +35,7 @@ public class DockerImage  implements Image {
     }
 
     /**
-     * Method providing image building and selecting right path for resource files.
+     * Method provides image building and selecting right path for resource files.
      * @param tag Set of image tags
      * @param path Path for dockerfile
      */

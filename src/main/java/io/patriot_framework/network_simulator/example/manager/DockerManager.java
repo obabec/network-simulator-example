@@ -15,14 +15,21 @@ import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import io.patriot_framework.network_simulator.example.container.Container;
 import io.patriot_framework.network_simulator.example.container.DockerContainer;
+import io.patriot_framework.network_simulator.example.files.FileUtils;
 import io.patriot_framework.network_simulator.example.network.DockerNetwork;
 import io.patriot_framework.network_simulator.example.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +40,9 @@ import java.util.regex.Pattern;
  */
 public class DockerManager implements Manager {
 
-
+    private static final String elasticName = "elastic-server";
+    private static final Set<String> elasticTagSet = new HashSet<>(Arrays.asList("elastic"));
+    private static final String elasticTag = "elastic";
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerManager.class);
     private DockerClient dockerClient = DockerClientBuilder.
             getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
@@ -96,6 +105,30 @@ public class DockerManager implements Manager {
                 .exec();
         LOGGER.info("Container created with id: " + containerResponse.getId());
         return new DockerContainer(name, containerResponse.getId(), new DockerManager());
+    }
+
+    public String createElasticContainer() {
+        Path tmpDockerDir;
+        FileUtils fileUtils = new FileUtils();
+        InputStream in = getClass().getResourceAsStream("/router/Dockerfile");
+
+        try {
+            tmpDockerDir = Files.createTempDirectory(Paths.get("/tmp"),"tmpTestDir");
+            Path testFile = Files.createTempFile(tmpDockerDir, "RouterDockerfile", "");
+            buildImage(new File(fileUtils.convertToFile(in, testFile.toString())), elasticTagSet);
+            CreateContainerResponse containerResponse = dockerClient.createContainerCmd(elasticTag)
+                    .withPrivileged(true)
+                    .withCmd()
+                    .withName("Elastic-server")
+                    .exec();
+            DockerContainer dc = new DockerContainer(elasticName, containerResponse.getId());
+            String ip = findIpAddress(dc);
+            LOGGER.info("Created elastic search container with ip: " + ip);
+            return ip;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -218,6 +251,11 @@ public class DockerManager implements Manager {
         dockerClient.startContainerCmd(container.getName()).exec();
     }
 
+    /**
+     * Method gathers gateway's network ip with CIDR.
+     * @param container
+     * @return
+     */
     public String getDefaultGwNetworkIp(Container container) {
         String ip = dockerClient.inspectContainerCmd(container.getName())
                 .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();

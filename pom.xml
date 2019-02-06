@@ -21,8 +21,8 @@
    <modelVersion>4.0.0</modelVersion>
 
    <groupId>io.patriot_framework</groupId>
-   <artifactId>docker-network-simulator</artifactId>
-   <version>2.0-SNAPSHOT</version>
+   <artifactId>patriot-network</artifactId>
+   <version>1.0-SNAPSHOT</version>
 
    <name>Docker controller for simulation</name>
    <licenses>

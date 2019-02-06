@@ -36,7 +36,7 @@ public class Cleaner {
 
 
     /**
-     * Clear instances of docker container from list (stop -> delete) and networks (delete).
+     * Clear instances of docker container from list (stop -&gt; delete) and networks (delete).
      *
      * @param networks   the networks
      * @param containers the containers

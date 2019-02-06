@@ -177,8 +177,8 @@ public class DockerFileBuilder implements Builder {
     /**
      * Entrypoint docker file builder with exec form.
      *
-     * @param entrypoint
-     * @return
+     * @param entrypoint list of commands executed as entrypoint
+     * @return returns this builder
      */
     public DockerFileBuilder entrypoint(List<String> entrypoint) {
         DockerFilePart entryDockerFilePart = new DockerEntryCmd();

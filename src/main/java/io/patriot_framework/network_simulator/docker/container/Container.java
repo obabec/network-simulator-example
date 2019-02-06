@@ -47,14 +47,7 @@ public interface Container {
     String getId();
 
     /**
-     * Is alive boolean.
-     *
-     * @return the boolean
-     */
-    boolean isAlive();
-
-    /**
-     * Exists boolean.
+     * Exists boolea..
      *
      * @return the boolean
      */

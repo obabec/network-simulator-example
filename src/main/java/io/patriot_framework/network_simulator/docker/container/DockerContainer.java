@@ -109,18 +109,10 @@ public class DockerContainer implements Container {
         this.dockerManager = (DockerManager) manager;
     }
 
-    /**
-     * Method returning if container is up or down.
-     * @return
-     */
-    @Override
-    public boolean isAlive() {
-        return false;
-    }
 
     /**
      * Method returns if is container alive.
-     * @return
+     * @return true when container is live
      */
     @Override
     public boolean exists() {
@@ -128,15 +120,12 @@ public class DockerContainer implements Container {
                 .filter(DockerContainer -> DockerContainer.getId().equals(this.id))
                 .collect(Collectors.toList());
 
-        if (aliveCont.isEmpty()) {
-            return false;
-        }
-        return true;
+        return !aliveCont.isEmpty();
     }
 
     /**
      * Method provides connecting container to networks.
-     * @param networks
+     * @param networks list of networks, where container will be connected
      */
     @Override
     public void connectToNetwork(List<Network> networks) {

@@ -16,8 +16,8 @@
 
 package io.patriot_framework.network_simulator.docker.manager;
 
+import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.container.Container;
-import io.patriot_framework.network_simulator.docker.network.Network;
 
 import java.io.File;
 import java.util.List;
@@ -75,6 +75,19 @@ public interface Manager {
      * @param network   the network
      */
     void connectContainerToNetwork(Container container,Network network);
+
+    /**
+     * Method stops container.
+     * @param container
+     */
+    void killContainer(Container container);
+
+    /**
+     * Disconnects container from network.
+     * @param container
+     * @param network
+     */
+    void disconnectContainer(Container container, Network network);
 
     /**
      * Destroy container.

@@ -17,6 +17,7 @@
 package io.patriot_framework.network_simulator.docker.network;
 
 import com.github.dockerjava.api.DockerClient;
+import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.manager.Manager;
 
 import java.util.List;
@@ -25,7 +26,8 @@ import java.util.stream.Collectors;
 /**
  * The type Docker network.
  */
-public class DockerNetwork implements Network {
+public class DockerNetwork extends Network {
+
     private DockerClient dockerClient;
     private String name;
     private String id;
@@ -64,17 +66,6 @@ public class DockerNetwork implements Network {
         this.id = id;
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public boolean exists(Manager dockerManager) {
         List<Network> networks = dockerManager.listNetworks().stream()
                                     .filter(Network -> Network.getId().equals(this.id))
@@ -85,4 +76,8 @@ public class DockerNetwork implements Network {
         return true;
     }
 
+    @Override
+    public String getCreator() {
+        return null;
+    }
 }

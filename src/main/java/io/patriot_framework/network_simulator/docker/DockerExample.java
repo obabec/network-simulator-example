@@ -19,13 +19,13 @@ package io.patriot_framework.network_simulator.docker;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
+import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.cleanup.Cleaner;
 import io.patriot_framework.network_simulator.docker.container.Container;
 import io.patriot_framework.network_simulator.docker.files.FileUtils;
 import io.patriot_framework.network_simulator.docker.image.docker.DockerImage;
 import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import io.patriot_framework.network_simulator.docker.network.DockerNetwork;
-import io.patriot_framework.network_simulator.docker.network.Network;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * The type Docker controller.
  */
-public class DockerController {
+public class DockerExample {
     private DockerClient dockerClient = DockerClientBuilder.
             getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
     private DockerManager dockerManager = new DockerManager();

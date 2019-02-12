@@ -16,7 +16,7 @@
 
 package io.patriot_framework.network_simulator.docker.container;
 
-import io.patriot_framework.network_simulator.docker.network.Network;
+import io.patriot_framework.network.simulator.api.model.network.Network;
 
 import java.util.List;
 

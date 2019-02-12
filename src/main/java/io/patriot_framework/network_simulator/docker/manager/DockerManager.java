@@ -29,10 +29,10 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
+import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.container.Container;
 import io.patriot_framework.network_simulator.docker.container.DockerContainer;
 import io.patriot_framework.network_simulator.docker.network.DockerNetwork;
-import io.patriot_framework.network_simulator.docker.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,6 +160,17 @@ public class DockerManager implements Manager {
     @Override
     public void connectContainerToNetwork(Container container, Network network) {
         dockerClient.connectToNetworkCmd().withNetworkId(network.getId()).withContainerId(container.getId()).exec();
+    }
+
+    @Override
+    public void killContainer(Container container) {
+        dockerClient.killContainerCmd(container.getId()).exec();
+    }
+
+    @Override
+    public void disconnectContainer(Container container, Network network) {
+        dockerClient.disconnectFromNetworkCmd().withContainerId(container.getId())
+                .withNetworkId(network.getId()).exec();
     }
 
     /**

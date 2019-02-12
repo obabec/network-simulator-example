@@ -16,9 +16,9 @@
 
 package io.patriot_framework.network_simulator.docker.container;
 
+import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import io.patriot_framework.network_simulator.docker.manager.Manager;
-import io.patriot_framework.network_simulator.docker.network.Network;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -19,9 +19,9 @@ package io.patriot_framework.network_simulator.docker.example;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import io.patriot_framework.network_simulator.docker.DockerController;
-import io.patriot_framework.network_simulator.docker.cleanup.Cleaner;
+import io.patriot_framework.network_simulator.docker.DockerExample;
 import io.patriot_framework.network_simulator.docker.args.CommandLineParser;
+import io.patriot_framework.network_simulator.docker.cleanup.Cleaner;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class Main {
      * @throws InterruptedException the interrupted exception
      */
     public static void main(String[] args) throws InterruptedException {
-        DockerController dockerController = new DockerController();
+        DockerExample dockerExample = new DockerExample();
         CommandLineParser cmdArgs = new CommandLineParser();
         CmdLineParser parser = new CmdLineParser(cmdArgs);
 
@@ -62,7 +62,7 @@ public class Main {
                     Arrays.asList("comm_client", "comm_server", "router"));
         } else {
             LOGGER.info("Generating enviropment");
-            dockerController.genererateEnviroment();
+            dockerExample.genererateEnviroment();
         }
 
 

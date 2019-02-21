@@ -33,7 +33,7 @@ import java.util.List;
 
 public class DockerController implements Controller {
     private DockerManager dockerManager;
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DockerController.class);
 
     public DockerController() {
         this.dockerManager = new DockerManager();
@@ -76,7 +76,7 @@ public class DockerController implements Controller {
     public void createNetwork(Network network) {
         LOGGER.info("Creating network: " + network.getName());
         DockerNetwork dockerNetwork = (DockerNetwork) dockerManager.createNetwork(network.getName(),
-                network.getId() + "/" + network.getMask());
+                network.getIPAddress() + "/" + network.getMask());
         network.setId(dockerNetwork.getId());
 
     }
@@ -91,16 +91,18 @@ public class DockerController implements Controller {
     public void deployDevice(Device device, String tag) {
         LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + tag);
         DockerContainer dockerContainer = (DockerContainer) dockerManager.createContainer(device.getName(), tag);
+        dockerManager.startContainer(dockerContainer);
         device.setIPAddress(dockerManager.findIpAddress(dockerContainer));
+
     }
 
     @Override
     public void deployDevice(Device device, File file) {
-        final String TAG = "deviceTag";
-        LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + TAG);
-        buildImage(file, TAG);
+        final String tag = "deviceTag";
+        LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + tag);
+        buildImage(file, tag);
         DockerContainer dockerContainer =
-                (DockerContainer) dockerManager.createContainer(device.getName(), TAG);
+                (DockerContainer) dockerManager.createContainer(device.getName(), tag);
         device.setIPAddress(dockerManager.findIpAddress(dockerContainer));
 
     }
@@ -112,6 +114,29 @@ public class DockerController implements Controller {
         dockerManager.buildImage(file, new HashSet<>(Arrays.asList(tag)));
     }
 
+    @Override
+    public String findGWNetworkIPAddress(Device device) {
+        DockerContainer container = (DockerContainer) getDeviceContainer(device);
+        return dockerManager.getDefaultGwNetworkIp(container);
+    }
+
+    @Override
+    public String findGWIPAddress(Device device) {
+        DockerContainer container = (DockerContainer) getDeviceContainer(device);
+        return dockerManager.getGatewayIP(container);
+    }
+
+
+    @Override
+    public Integer findGWMask(Device device) {
+        return dockerManager.getDefaultGwNetworkMask(getDeviceContainer(device));
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "Docker";
+    }
+
     /**
      * Finds container from device name. If container is not found returns null.
      * @param device
@@ -121,7 +146,9 @@ public class DockerController implements Controller {
         List<Container> dockerContainers = dockerManager.listContainers();
 
         for (Container c : dockerContainers) {
-            if (c.getName().equals(device.getName())) {
+            String cName = c.getName().replace("[/", "");
+            cName = cName.replace("]", "");
+            if (cName.equals(device.getName())) {
                 return c;
             }
         }

@@ -29,28 +29,6 @@ import java.util.stream.Collectors;
 public class DockerNetwork extends Network {
 
     private DockerClient dockerClient;
-    private String name;
-    private String id;
-
-    /**
-     * Instantiates a new Docker network.
-     *
-     * @param name the name
-     */
-    public DockerNetwork(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Instantiates a new Docker network.
-     *
-     * @param name the name
-     * @param id   the id
-     */
-    public DockerNetwork(String name, String id) {
-        this.name = name;
-        this.id = id;
-    }
 
     /**
      * Instantiates a new Docker network.
@@ -62,13 +40,17 @@ public class DockerNetwork extends Network {
     public DockerNetwork(DockerClient dockerClient, String name, String id) {
 
         this.dockerClient = dockerClient;
-        this.name = name;
-        this.id = id;
+        super.setName(name);
+        super.setId(id);
+    }
+
+    public DockerNetwork(String name, String id) {
+        super(name, id);
     }
 
     public boolean exists(Manager dockerManager) {
         List<Network> networks = dockerManager.listNetworks().stream()
-                                    .filter(Network -> Network.getId().equals(this.id))
+                                    .filter(Network -> Network.getId().equals(super.getId()))
                                     .collect(Collectors.toList());
         if (networks.isEmpty()) {
             return false;

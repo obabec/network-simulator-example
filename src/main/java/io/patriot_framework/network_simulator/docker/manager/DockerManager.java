@@ -245,6 +245,12 @@ public class DockerManager implements Manager {
         dockerClient.startContainerCmd(container.getName()).exec();
     }
 
+    public String getGatewayIP(Container container) {
+        String ip = dockerClient.inspectContainerCmd(container.getName())
+                .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();
+        return ip;
+    }
+
     public String getDefaultGwNetworkIp(Container container) {
         String ip = dockerClient.inspectContainerCmd(container.getName())
                 .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();

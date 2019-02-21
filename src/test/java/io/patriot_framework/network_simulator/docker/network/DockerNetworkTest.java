@@ -17,8 +17,8 @@
 package io.patriot_framework.network_simulator.docker.network;
 
 import com.github.dockerjava.api.model.Network;
-import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import io.patriot_framework.network_simulator.docker.TestClass;
+import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

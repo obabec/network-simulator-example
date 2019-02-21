@@ -17,10 +17,10 @@
 package io.patriot_framework.network_simulator.docker.image;
 
 import com.github.dockerjava.api.model.Image;
-import io.patriot_framework.network_simulator.docker.image.docker.DockerImage;
-import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import io.patriot_framework.network_simulator.docker.DockerfileGenerator;
 import io.patriot_framework.network_simulator.docker.TestClass;
+import io.patriot_framework.network_simulator.docker.image.docker.DockerImage;
+import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

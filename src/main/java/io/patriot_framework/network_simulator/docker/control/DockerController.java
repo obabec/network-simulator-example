@@ -41,7 +41,9 @@ public class DockerController implements Controller {
 
     @Override
     public void connectDeviceToNetwork(Device device, Network network) {
+        stopDevice(device);
         dockerManager.connectContainerToNetwork(getDeviceContainer(device), network);
+        dockerManager.startContainer(getDeviceContainer(device));
         LOGGER.info("Container: " + device.getName() + "is connected to network: " + network.getName());
     }
 
@@ -135,6 +137,11 @@ public class DockerController implements Controller {
     @Override
     public String getIdentifier() {
         return "Docker";
+    }
+
+    @Override
+    public void executeCommand(Device device, String command) {
+        dockerManager.runCommand(getDeviceContainer(device), command);
     }
 
     /**

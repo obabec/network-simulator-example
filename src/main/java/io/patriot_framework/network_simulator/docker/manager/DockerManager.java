@@ -22,6 +22,7 @@ import com.github.dockerjava.api.command.CreateNetworkResponse;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.Network.Ipam;
 import com.github.dockerjava.api.model.NetworkSettings;
 import com.github.dockerjava.api.model.Volume;
@@ -82,9 +83,11 @@ public class DockerManager implements Manager {
     @Override
     public Container createContainer(String name, String tag) {
         LOGGER.info("Started creating container");
+
         CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
                 .withPrivileged(true)
                 .withCmd()
+                .withCapAdd(Capability.NET_ADMIN)
                 .withName(name)
                 .exec();
         LOGGER.info("Container created with id: " + containerResponse.getId());

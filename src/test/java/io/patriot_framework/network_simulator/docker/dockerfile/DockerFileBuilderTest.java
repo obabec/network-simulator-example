@@ -51,14 +51,14 @@ public class DockerFileBuilderTest {
         String workdir = "/";
         Path targetFile = Paths.get("testFile.txt");
         Path newFile = Paths.get("/tmp/testFile.txt");
-        content = Arrays.asList(basePacakge, run, run1, cmd, workdir, newFile.toString()+ " " + targetFile.toString());
+        content = Arrays.asList(basePacakge, run, run1, cmd, workdir, newFile.toString() + " " + targetFile.toString());
         try {
-            Path tmpDir = Files.createTempDirectory(Paths.get("/tmp"),"tmpDockerDir");
+            Path tmpDir = Files.createTempDirectory(Paths.get("/tmp"), "tmpDockerDir");
             Path dockerFile = Files.createTempFile(tmpDir, "Dockerfile", "");
             dockerFileBuilder.from(basePacakge).run(Arrays.asList(run, run1)).cmd(Arrays.asList(cmd))
                     .workdir(workdir).add(newFile, targetFile).write(newFile);
 
-            try(BufferedReader bf = new BufferedReader(new FileReader(newFile.toString()))) {
+            try (BufferedReader bf = new BufferedReader(new FileReader(newFile.toString()))) {
                 String line = bf.readLine();
                 while (line != null) {
                     actualFile.add(line);

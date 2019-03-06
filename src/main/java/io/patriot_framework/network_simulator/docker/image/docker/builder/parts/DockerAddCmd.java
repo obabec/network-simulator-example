@@ -19,11 +19,12 @@ package io.patriot_framework.network_simulator.docker.image.docker.builder.parts
 /**
  * The type Add docker file part.
  */
-public class DockerAddCmd implements DockerFilePart{
+public class DockerAddCmd implements DockerFilePart {
     /**
      * String line representing part of command line in Dockerfile.
      */
     private String plainLine;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;
@@ -35,9 +36,10 @@ public class DockerAddCmd implements DockerFilePart{
      * @param newFile  the new file
      * @param filePath the file path
      */
-    public void setRequest(String newFile, String filePath){
+    public void setRequest(String newFile, String filePath) {
         setRequest(newFile + " " + filePath);
     }
+
     @Override
     public String translate() {
         return "ADD " + plainLine;

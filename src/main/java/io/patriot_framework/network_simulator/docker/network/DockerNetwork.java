@@ -16,7 +16,6 @@
 
 package io.patriot_framework.network_simulator.docker.network;
 
-import com.github.dockerjava.api.DockerClient;
 import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.manager.Manager;
 
@@ -28,38 +27,21 @@ import java.util.stream.Collectors;
  */
 public class DockerNetwork extends Network {
 
-    private DockerClient dockerClient;
-
-    /**
-     * Instantiates a new Docker network.
-     *
-     * @param dockerClient the docker client
-     * @param name         the name
-     * @param id           the id
-     */
-    public DockerNetwork(DockerClient dockerClient, String name, String id) {
-
-        this.dockerClient = dockerClient;
+    public DockerNetwork(String name, String id) {
         super.setName(name);
         super.setId(id);
     }
 
-    public DockerNetwork(String name, String id) {
-        super(name, id);
-    }
 
     public boolean exists(Manager dockerManager) {
         List<Network> networks = dockerManager.listNetworks().stream()
-                                    .filter(Network -> Network.getId().equals(super.getId()))
-                                    .collect(Collectors.toList());
-        if (networks.isEmpty()) {
-            return false;
-        }
-        return true;
+                .filter(Network -> Network.getId().equals(super.getId()))
+                .collect(Collectors.toList());
+        return !networks.isEmpty();
     }
 
     @Override
     public String getCreator() {
-        return null;
+        return "Docker";
     }
 }

@@ -49,7 +49,7 @@ public class DockerfileGenerator {
     public Path createAndGenerateDockerfile() {
         Path tmpDir = null;
         try {
-            tmpDir = Files.createTempDirectory(Paths.get("/tmp"),"tmpDockerDir");
+            tmpDir = Files.createTempDirectory(Paths.get("/tmp"), "tmpDockerDir");
             Path testFile = Files.createTempFile(tmpDir, "Dockerfile", "");
             generateDockerFile(testFile.toAbsolutePath());
             dirPath = tmpDir;

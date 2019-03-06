@@ -21,11 +21,12 @@ import java.util.List;
 /**
  * The type Entry docker file part.
  */
-public class DockerEntryCmd implements DockerFilePart{
+public class DockerEntryCmd implements DockerFilePart {
     /**
      * Prepare specific ENTRYPOINT request for Dockerfile translation.
      */
     private String plainLine;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;
@@ -33,6 +34,7 @@ public class DockerEntryCmd implements DockerFilePart{
 
     /**
      * Prepare specific ENTRYPOINT in exec form. Use in combination with CMD.
+     *
      * @param commandWithArgs
      */
     public void setRequest(List<String> commandWithArgs) {

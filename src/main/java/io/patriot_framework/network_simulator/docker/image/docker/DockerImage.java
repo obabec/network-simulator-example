@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * Class represents DockerImage. Providing necessary functionality, like building and deleting images.
  */
-public class DockerImage  implements Image {
+public class DockerImage implements Image {
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerImage.class);
     private Path tmpDockerDir;
     private FileUtils fileUtils;
@@ -52,7 +52,8 @@ public class DockerImage  implements Image {
 
     /**
      * Method provides image building and selecting right path for resource files.
-     * @param tag Set of image tags
+     *
+     * @param tag  Set of image tags
      * @param path Path for dockerfile
      */
     public void buildImage(Set<String> tag, String path) {
@@ -61,7 +62,7 @@ public class DockerImage  implements Image {
 
     public void buildRouterImage(Set<String> tag) throws IOException {
         InputStream in = getClass().getResourceAsStream("/router/Dockerfile");
-        if (tmpDockerDir == null) tmpDockerDir = Files.createTempDirectory(Paths.get("/tmp"),"tmpTestDir");
+        if (tmpDockerDir == null) tmpDockerDir = Files.createTempDirectory(Paths.get("/tmp"), "tmpTestDir");
         Path testFile = Files.createTempFile(tmpDockerDir, "RouterDockerfile", "");
 
         dockerManager.buildImage(new File(fileUtils.convertToFile(in, testFile.toString())), tag);
@@ -70,7 +71,7 @@ public class DockerImage  implements Image {
     public void buildAppImage(Set<String> tag) throws IOException {
 
         InputStream in = getClass().getResourceAsStream("/app/Dockerfile");
-        if (tmpDockerDir == null) tmpDockerDir = Files.createTempDirectory(Paths.get("/tmp"),"tmpTestDir");
+        if (tmpDockerDir == null) tmpDockerDir = Files.createTempDirectory(Paths.get("/tmp"), "tmpTestDir");
         Path testFile = Files.createTempFile(tmpDockerDir, "AppDockerfile", "");
 
         dockerManager.buildImage(new File(fileUtils.convertToFile(in, testFile.toString())), tag);
@@ -89,7 +90,6 @@ public class DockerImage  implements Image {
     public void deleteImage(String imageTag) {
         dockerManager.deleteImage(imageTag);
     }
-
 
 
 }

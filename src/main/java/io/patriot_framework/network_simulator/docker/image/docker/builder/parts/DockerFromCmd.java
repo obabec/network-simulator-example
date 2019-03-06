@@ -21,6 +21,7 @@ package io.patriot_framework.network_simulator.docker.image.docker.builder.parts
  */
 public class DockerFromCmd implements DockerFilePart {
     private String plainLine;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;

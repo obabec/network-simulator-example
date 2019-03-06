@@ -31,6 +31,7 @@ public class DockerRunCmd implements DockerFilePart {
      * The Commands.
      */
     private List<String> commands;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;
@@ -50,7 +51,7 @@ public class DockerRunCmd implements DockerFilePart {
     public String translate() {
         String finalLine = "RUN ";
         if (commands != null && !commands.isEmpty()) {
-            for (int i = 0; i < commands.size(); i++){
+            for (int i = 0; i < commands.size(); i++) {
                 if (commands.size() - 1 == i) {
                     finalLine = finalLine + commands.get(i);
                 } else {

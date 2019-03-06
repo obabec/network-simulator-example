@@ -133,6 +133,7 @@ public class DockerManager implements Manager {
 
     /**
      * Method providing service for finding containers and return list of all created containers
+     *
      * @return
      */
     @Override
@@ -140,7 +141,7 @@ public class DockerManager implements Manager {
         List<com.github.dockerjava.api.model.Container> outputConts = dockerClient.listContainersCmd()
                 .withShowAll(true).exec();
         List<Container> dockerContainers = new ArrayList<>();
-        for (com.github.dockerjava.api.model.Container c: outputConts) {
+        for (com.github.dockerjava.api.model.Container c : outputConts) {
             dockerContainers.add(new DockerContainer(Arrays.toString(c.getNames()), c.getId()));
         }
         return dockerContainers;
@@ -148,13 +149,14 @@ public class DockerManager implements Manager {
 
     /**
      * Method providing service for finding networks and return list of all created networks
+     *
      * @return
      */
     @Override
     public List<Network> listNetworks() {
         List<com.github.dockerjava.api.model.Network> modelNetworks = dockerClient.listNetworksCmd().exec();
         List<Network> networks = new ArrayList<>();
-        for (com.github.dockerjava.api.model.Network network :  modelNetworks) {
+        for (com.github.dockerjava.api.model.Network network : modelNetworks) {
             networks.add(new DockerNetwork(network.getName(), network.getId()));
         }
         return networks;
@@ -178,6 +180,7 @@ public class DockerManager implements Manager {
 
     /**
      * Method which destroys docker network based on network id.
+     *
      * @param container
      */
     @Override
@@ -186,7 +189,7 @@ public class DockerManager implements Manager {
 
         if (container.getId() == null || container.getId().isEmpty()) {
             outputCont = dockerClient.listContainersCmd().withShowAll(true)
-                .withNameFilter(Arrays.asList(container.getName())).exec();
+                    .withNameFilter(Arrays.asList(container.getName())).exec();
         } else {
             outputCont = dockerClient.listContainersCmd().withShowAll(true)
                     .withIdFilter(Arrays.asList(container.getId())).exec();
@@ -208,6 +211,7 @@ public class DockerManager implements Manager {
 
     /**
      * Method which destroys docker network based on network id.
+     *
      * @param network
      */
     @Override
@@ -217,6 +221,7 @@ public class DockerManager implements Manager {
 
     /**
      * Method is providing execution of commands directly in running docker container.
+     *
      * @param container
      * @param command
      */
@@ -231,8 +236,8 @@ public class DockerManager implements Manager {
                     .withUser("root")
                     .exec();
             dockerClient.execStartCmd(execCreateCmdResponse.getId())
-                        .exec(new ExecStartResultCallback(System.out, System.err))
-                        .awaitCompletion(10,TimeUnit.SECONDS);
+                    .exec(new ExecStartResultCallback(System.out, System.err))
+                    .awaitCompletion(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -240,12 +245,13 @@ public class DockerManager implements Manager {
 
     /**
      * Method which starts docker container based on container name.
+     *
      * @param container
      */
     @Override
     public void startContainer(Container container) {
         LOGGER.info("Starting container");
-        dockerClient.startContainerCmd(container.getName()).exec();
+        dockerClient.startContainerCmd(container.getId()).exec();
     }
 
     public String getGatewayIP(Container container) {
@@ -263,6 +269,7 @@ public class DockerManager implements Manager {
 
     /**
      * Method gathers gateway's network mask.
+     *
      * @param container
      * @return
      */
@@ -277,75 +284,53 @@ public class DockerManager implements Manager {
      * we have to convert it from container's ip and mask. Convert uses logic
      * AND function.
      *
-     * @param ip IP Address of container in target network.
+     * @param ip   IP Address of container in target network.
      * @param mask mask of containers ip addres in target network.
      * @return Network IP Address
      */
-    private String convertToNetworkIp(String ip, int mask) {
+    public String convertToNetworkIp(String ip, int mask) {
         String[] s = ip.split(Pattern.quote("."));
-        ArrayList<String> binIp = new ArrayList<>(4);
-         for (String octet : s) {
-             binIp.add(Integer.toBinaryString(Integer.parseInt(octet)));
-         }
-
-         completeByte(binIp);
-         ArrayList<String> binMask = convertCidrToBinMask(mask);
-         completeByte(binMask);
-         String networkIp = "";
-
-         for (int i = 0; i < 4; i++) {
-             String binNetworkIp = "";
-             for (int y = 0; y < 8; y++) {
-                binNetworkIp += Integer.parseInt(binIp.get(i).charAt(y) + "") &
-                        Integer.parseInt(binMask.get(i).charAt(y) + "");
+        long binIp = 0;
+        for (int i = 0; i < s.length; i++) {
+            if (i == 0) {
+                binIp = Integer.parseInt(s[i]);
+            } else {
+                binIp = (binIp << 8) | Integer.parseInt(s[i]);
             }
-             networkIp += String.valueOf(Integer.parseInt(binNetworkIp, 2));
+        }
+        long binMask = convertCidrToBinMask(mask);
+        String networkIp = "";
+
+        long binNetworkIp = binIp & binMask;
+        for (int i = 24; i >=0; i-= 8) {
+            networkIp += ((binNetworkIp >> i) & 0xFF);
             if (i != 3) {
                 networkIp += ".";
             }
-         }
-         return networkIp;
+        }
+
+        return networkIp;
     }
 
     /**
      * Method converts CIDR mask to binary mask (16 -> 11111111 11111111 00000000 00000000).
      * Binary mask is used for converting host ip to network ip.
+     *
      * @param mask CIDR mask
      * @return ArrayList with binary mask (each index is 1 bit)
      */
-    private ArrayList<String> convertCidrToBinMask(int mask) {
-        ArrayList<String> binMask = new ArrayList<>(4);
-        String p = "";
-        for (int i = 1; i <= 32; i++) {
-            if (mask != 0) {
-                p += "1";
-                mask--;
+    private long convertCidrToBinMask(int mask) {
+        long binMask = 1;
+        for (int i = 0; i < 32; i++) {
+            if (mask > 0) {
+                binMask = (binMask << 1) + 1;
+            } else {
+                binMask = binMask << 1;
             }
-            if (i % 8 == 0) {
-                binMask.add(p);
-                p = "";
-            }
+            mask--;
         }
-        completeByte(binMask);
-
         return binMask;
     }
-
-    /**
-     * Method completes byte with zero bites. Cooperates with convertCidrToBinMask method.
-     * @param binMask ArrayList with binary mask
-     */
-    private void completeByte(ArrayList<String> binMask) {
-        for (int i = 0; i < 4; i++) {
-            String zeroBites = "";
-            for (int y = binMask.get(i).length(); y < 8; y++) {
-                zeroBites += "0";
-            }
-            binMask.set(i, zeroBites + binMask.get(i));
-        }
-    }
-
-
 
     public void delDefaultGateway(DockerContainer container) {
         this.runCommand(container, "ip route del default");

@@ -26,6 +26,7 @@ public class DockerCmdCmd implements DockerFilePart {
      * String line representing part of command line in Dockerfile.
      */
     private String plainLine;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;

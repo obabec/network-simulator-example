@@ -109,10 +109,20 @@ public class DockerContainer implements Container {
         this.dockerManager = (DockerManager) manager;
     }
 
+    /**
+     * Method returning if container is up or down.
+     *
+     * @return
+     */
+    @Override
+    public boolean isAlive() {
+        return false;
+    }
 
     /**
      * Method returns if is container alive.
-     * @return true when container is live
+     *
+     * @return
      */
     @Override
     public boolean exists() {
@@ -125,7 +135,8 @@ public class DockerContainer implements Container {
 
     /**
      * Method provides connecting container to networks.
-     * @param networks list of networks, where container will be connected
+     *
+     * @param networks
      */
     @Override
     public void connectToNetwork(List<Network> networks) {
@@ -144,6 +155,7 @@ public class DockerContainer implements Container {
 
     /**
      * Method gathers ip of container's gateway.
+     *
      * @return String Ip address of container gateway
      */
     public String getGatewayNetworkIp() {
@@ -152,6 +164,7 @@ public class DockerContainer implements Container {
 
     /**
      * Method gathers CIDR mask of container's gateway.
+     *
      * @return Integer CIDR mask of container gateway.
      */
     public Integer getGatewayNetworkMask() {

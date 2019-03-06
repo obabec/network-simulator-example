@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -113,7 +114,7 @@ public class DockerController implements Controller {
     @Override
     public void buildImage(File file, String tag) {
         LOGGER.info("Building image from " + file.getPath() + " with tag: " + tag);
-        dockerManager.buildImage(file, new HashSet<>(Arrays.asList(tag)));
+        dockerManager.buildImage(file, new HashSet<>(Collections.singletonList(tag)));
     }
 
     @Override
@@ -127,7 +128,6 @@ public class DockerController implements Controller {
         DockerContainer container = (DockerContainer) getDeviceContainer(device);
         return dockerManager.getGatewayIP(container);
     }
-
 
     @Override
     public Integer findGWMask(Device device) {
@@ -144,8 +144,14 @@ public class DockerController implements Controller {
         dockerManager.runCommand(getDeviceContainer(device), command);
     }
 
+    @Override
+    public void startDevice(Device device) {
+        dockerManager.startContainer(getDeviceContainer(device));
+    }
+
     /**
      * Finds container from device name. If container is not found returns null.
+     *
      * @param device
      * @return Device container
      */

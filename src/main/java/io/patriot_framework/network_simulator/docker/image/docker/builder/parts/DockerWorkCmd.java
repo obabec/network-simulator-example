@@ -19,11 +19,12 @@ package io.patriot_framework.network_simulator.docker.image.docker.builder.parts
 /**
  * The type Work docker file part.
  */
-public class DockerWorkCmd implements DockerFilePart{
+public class DockerWorkCmd implements DockerFilePart {
     /**
      * Prepare specific CMD request for Dockerfile translation.
      */
     private String plainLine;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;

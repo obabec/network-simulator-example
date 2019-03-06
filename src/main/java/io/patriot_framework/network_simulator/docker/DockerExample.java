@@ -30,6 +30,7 @@ import io.patriot_framework.network_simulator.docker.network.DockerNetwork;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class DockerExample {
         try {
             DockerManager dockerManager = new DockerManager();
             String tagApp = "app_test:01";
-            String tagRouter  = "router_iproute:01";
+            String tagRouter = "router_iproute:01";
 
             buildImages(tagApp, tagRouter);
 
@@ -60,22 +61,23 @@ public class DockerExample {
             DockerNetwork clientNetwork =
                     (DockerNetwork) dockerManager.createNetwork("client_network", "172.29.0.0/16");
             networks.add(clientNetwork.getName());
-            Container router = dockerManager.createContainer("router",tagRouter);
+            Container router = dockerManager.createContainer("router", tagRouter);
             conts.add(connectAndStart(dockerManager, router, Arrays.asList(clientNetwork, serverNetwork)));
 
             System.out.println(dockerManager.findIpAddress(router, serverNetwork));
 
             Container commClient = dockerManager.createContainer("comm_client", tagApp);
-            conts.add(connectAndStart(dockerManager, commClient, Arrays.asList(clientNetwork)));
+            conts.add(connectAndStart(dockerManager, commClient, Collections.singletonList(clientNetwork)));
 
             Container commServer = dockerManager.createContainer("comm_server", tagApp);
-            conts.add(connectAndStart(dockerManager, commServer, Arrays.asList(serverNetwork)));
+            conts.add(connectAndStart(dockerManager, commServer, Collections.singletonList(serverNetwork)));
 
-        } catch (Exception e ) {
+        } catch (Exception e) {
             e.printStackTrace();
             Cleaner cleaner = new Cleaner();
             cleaner.cleanUp(networks, conts);
         }
+
 
     }
 
@@ -87,7 +89,7 @@ public class DockerExample {
      * @param networks  the networks
      * @return the string
      */
-    String connectAndStart(DockerManager manager,Container container, List<Network> networks) {
+    private String connectAndStart(DockerManager manager, Container container, List<Network> networks) {
         container.connectToNetwork(networks);
         manager.startContainer(container);
         return container.getName();
@@ -99,7 +101,7 @@ public class DockerExample {
      * @param tagApp    the tag app
      * @param tagRouter the tag router
      */
-    void buildImages(String tagApp, String tagRouter){
+    private void buildImages(String tagApp, String tagRouter) {
 
         FileUtils fileUtils = new FileUtils();
         DockerImage dockerImage = new DockerImage(dockerManager);

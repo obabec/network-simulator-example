@@ -42,13 +42,13 @@ class FileUtilsTest {
     void convertToFile() {
 
         try {
-            Path tmpDir = Files.createTempDirectory(Paths.get(""),"tmpTestDir");
+            Path tmpDir = Files.createTempDirectory(Paths.get(""), "tmpTestDir");
             FileUtils fileUtils = new FileUtils();
             Path testFile = Files.createTempFile(tmpDir, "testFile", ".tmp");
             writeToFile(testFile.toString());
-            File testedFile = new File(fileUtils.convertToFile(new FileInputStream(testFile.toString()),tmpDir.toString() + "/testedFile"));
+            File testedFile = new File(fileUtils.convertToFile(new FileInputStream(testFile.toString()), tmpDir.toString() + "/testedFile"));
 
-            assertEquals(true, org.apache.commons.io.FileUtils.contentEquals(testedFile,testFile.toFile()));
+            assertEquals(true, org.apache.commons.io.FileUtils.contentEquals(testedFile, testFile.toFile()));
             fileUtils.deleteDirWithFiles(tmpDir.toFile());
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,7 +62,7 @@ class FileUtilsTest {
     void deleteDirWithFiles() {
         try {
             Path tempDir = Files.createTempDirectory(Paths.get(""), "tmpTestDir");
-            Path testFile = Files.createTempFile(tempDir ,"testFile", ".tmp");
+            Path testFile = Files.createTempFile(tempDir, "testFile", ".tmp");
             FileUtils fileUtils = new FileUtils();
             fileUtils.deleteDirWithFiles(tempDir.toFile());
             assertEquals(false, tempDir.toFile().exists());

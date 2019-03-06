@@ -16,7 +16,6 @@
 
 package io.patriot_framework.network_simulator.docker.image.docker.builder;
 
-import io.patriot_framework.network_simulator.docker.image.Builder;
 import io.patriot_framework.network_simulator.docker.image.docker.builder.parts.DockerAddCmd;
 import io.patriot_framework.network_simulator.docker.image.docker.builder.parts.DockerCmdCmd;
 import io.patriot_framework.network_simulator.docker.image.docker.builder.parts.DockerEntryCmd;
@@ -38,7 +37,7 @@ import java.util.List;
 /**
  * The type Docker file builder.
  */
-public class DockerFileBuilder implements Builder {
+public class DockerFileBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerFileBuilder.class);
     private List<DockerFilePart> fileContent = new ArrayList<>();
 

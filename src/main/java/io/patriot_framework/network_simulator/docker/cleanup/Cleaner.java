@@ -47,7 +47,7 @@ public class Cleaner {
                 withNameFilter(containers).exec();
 
         if (!outputCont.isEmpty()) {
-            for (Container container: outputCont) {
+            for (Container container : outputCont) {
 
                 if (!container.getStatus().contains("Exited") && !container.getStatus().contains("Created")) {
                     dockerClient.killContainerCmd(container.getId()).exec();

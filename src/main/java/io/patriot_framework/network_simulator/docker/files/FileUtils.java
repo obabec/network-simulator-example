@@ -61,12 +61,12 @@ public class FileUtils {
      * @param dir target directory
      */
     public void deleteDirWithFiles(File dir) {
-        String[]entries = dir.list();
-        for(String s: entries){
-            File currentFile = new File(dir.getPath(),s);
+        String[] entries = dir.list();
+        for (String s : entries) {
+            File currentFile = new File(dir.getPath(), s);
             currentFile.delete();
         }
         dir.delete();
     }
-    }
+}
 

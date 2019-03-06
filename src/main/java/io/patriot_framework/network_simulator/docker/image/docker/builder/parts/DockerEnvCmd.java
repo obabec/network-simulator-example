@@ -19,11 +19,12 @@ package io.patriot_framework.network_simulator.docker.image.docker.builder.parts
 /**
  * The type Env docker file part.
  */
-public class DockerEnvCmd implements DockerFilePart{
+public class DockerEnvCmd implements DockerFilePart {
     /**
      * String line representing part of command line in Dockerfile.
      */
     private String plainLine;
+
     @Override
     public void setRequest(String plainLine) {
         this.plainLine = plainLine;

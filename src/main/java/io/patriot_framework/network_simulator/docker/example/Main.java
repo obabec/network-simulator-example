@@ -22,6 +22,7 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import io.patriot_framework.network_simulator.docker.DockerExample;
 import io.patriot_framework.network_simulator.docker.args.CommandLineParser;
 import io.patriot_framework.network_simulator.docker.cleanup.Cleaner;
+import io.patriot_framework.network_simulator.docker.manager.DockerManager;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
@@ -64,10 +65,8 @@ public class Main {
             LOGGER.info("Generating enviropment");
             dockerExample.genererateEnviroment();
         }
-
-
+        dockerExample.genererateEnviroment();
     }
-
 
 
 }

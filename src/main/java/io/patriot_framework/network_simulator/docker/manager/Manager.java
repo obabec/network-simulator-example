@@ -74,16 +74,18 @@ public interface Manager {
      * @param container the container
      * @param network   the network
      */
-    void connectContainerToNetwork(Container container,Network network);
+    void connectContainerToNetwork(Container container, Network network);
 
     /**
      * Method stops container.
+     *
      * @param container
      */
     void killContainer(Container container);
 
     /**
      * Disconnects container from network.
+     *
      * @param container
      * @param network
      */

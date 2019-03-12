@@ -27,14 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 public class DockerController implements Controller {
-    private DockerManager dockerManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerController.class);
+    private DockerManager dockerManager;
 
     public DockerController() {
         this.dockerManager = new DockerManager();

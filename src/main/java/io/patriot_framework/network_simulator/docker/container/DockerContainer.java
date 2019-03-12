@@ -32,38 +32,7 @@ public class DockerContainer implements Container {
     private String id;
     private DockerManager dockerManager;
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getIpAddress(Network network) {
-        return dockerManager.findIpAddress(this, network);
-    }
-
-    /**
-     * Sets name.
-     *
-     * @param name the name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     public DockerContainer(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Sets id.
-     *
-     * @param id the id
-     */
-    public void setId(String id) {
         this.id = id;
     }
 
@@ -88,6 +57,37 @@ public class DockerContainer implements Container {
      */
     public DockerContainer(String name, String id) {
         this.name = name;
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getIpAddress(Network network) {
+        return dockerManager.findIpAddress(this, network);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
+    public void setId(String id) {
         this.id = id;
     }
 

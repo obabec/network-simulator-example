@@ -30,10 +30,9 @@ import java.util.List;
  * Class designed for cleaning docker after job, means delete containers, networks and sometimes images.
  */
 public class Cleaner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cleaner.class);
     private DockerClient dockerClient = DockerClientBuilder.
             getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cleaner.class);
-
 
     /**
      * Clear instances of docker container from list (stop -&gt; delete) and networks (delete).

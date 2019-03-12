@@ -302,9 +302,9 @@ public class DockerManager implements Manager {
         String networkIp = "";
 
         long binNetworkIp = binIp & binMask;
-        for (int i = 24; i >=0; i-= 8) {
+        for (int i = 24; i >= 0; i -= 8) {
             networkIp += ((binNetworkIp >> i) & 0xFF);
-            if (i != 3) {
+            if (i != 0) {
                 networkIp += ".";
             }
         }

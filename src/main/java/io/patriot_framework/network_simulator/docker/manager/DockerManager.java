@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Capability;
+import com.github.dockerjava.api.model.LogConfig;
 import com.github.dockerjava.api.model.Network.Ipam;
 import com.github.dockerjava.api.model.NetworkSettings;
 import com.github.dockerjava.api.model.Volume;
@@ -40,7 +41,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -110,6 +113,7 @@ public class DockerManager implements Manager {
                 .withPrivileged(true)
                 .withVolumes(volume)
                 .withBinds(new Bind(bindPath, volume))
+                .withCapAdd(Capability.NET_ADMIN)
                 .withCmd()
                 .withName(name)
                 .exec();
@@ -117,6 +121,31 @@ public class DockerManager implements Manager {
         return new DockerContainer(name, containerResponse.getId(), new DockerManager());
     }
 
+
+    /**
+     * Create container container with elastic log hook.
+     *
+     * @param name          the name
+     * @param tag           the tag
+     * @param elasticIP     the elastic ip
+     * @param logshtashPort the logshtash port
+     * @return the container
+     */
+    public Container createContainer(String name, String tag, String elasticIP, Integer logshtashPort) {
+        LOGGER.info("Starting creating container with elastic hook: " + elasticIP);
+        Map<String, String> gelfProps = new HashMap<>();
+        gelfProps.put("gelf-address", "udp://" + elasticIP + ":" + logshtashPort);
+        LogConfig gelfLog = new LogConfig(LogConfig.LoggingType.GELF, gelfProps);
+        CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
+                .withPrivileged(true)
+                .withCapAdd(Capability.NET_ADMIN)
+                .withLogConfig(gelfLog)
+                .withCmd()
+                .withName(name)
+                .exec();
+        LOGGER.info("Container created with id: " + containerResponse.getId());
+        return new DockerContainer(name, containerResponse.getId(), new DockerManager());
+    }
 
     @Override
     public Network createNetwork(String name, String subnet) {

@@ -110,16 +110,6 @@ public class DockerContainer implements Container {
     }
 
     /**
-     * Method returning if container is up or down.
-     *
-     * @return
-     */
-    @Override
-    public boolean isAlive() {
-        return false;
-    }
-
-    /**
      * Method returns if is container alive.
      *
      * @return

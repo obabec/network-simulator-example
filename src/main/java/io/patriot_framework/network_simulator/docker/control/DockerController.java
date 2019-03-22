@@ -99,6 +99,15 @@ public class DockerController implements Controller {
     }
 
     @Override
+    public void deployDevice(Device device, String tag, String monitoringIP, int monitoringPort) {
+        LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + tag);
+        DockerContainer dockerContainer = (DockerContainer) dockerManager.createContainer(device.getName(),
+                tag, monitoringIP, monitoringPort);
+        dockerManager.startContainer(dockerContainer);
+        device.setIPAddress(dockerManager.findIpAddress(dockerContainer));
+    }
+
+    @Override
     public void deployDevice(Device device, File file) {
         final String tag = "deviceTag";
         LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + tag);

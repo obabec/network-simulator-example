@@ -111,7 +111,7 @@
       <org.junit.platform.version>1.2.0</org.junit.platform.version>
       <org.junit.jupiter.version>5.2.0</org.junit.jupiter.version>
       <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
-      <org.java-docker.version>3.1.0-rc-3</org.java-docker.version>
+      <org.java-docker.version>3.1.2</org.java-docker.version>
       <org.slf4j.version>1.7.5</org.slf4j.version>
       <org.codehouse.mojo.version>1.6.0</org.codehouse.mojo.version>
       <org.args4j.version>2.33</org.args4j.version>

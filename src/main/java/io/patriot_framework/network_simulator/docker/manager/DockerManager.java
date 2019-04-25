@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Capability;
+import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.LogConfig;
 import com.github.dockerjava.api.model.Network.Ipam;
 import com.github.dockerjava.api.model.NetworkSettings;
@@ -88,9 +89,9 @@ public class DockerManager implements Manager {
         LOGGER.info("Started creating container");
 
         CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
-                .withPrivileged(true)
-                .withCmd()
-                .withCapAdd(Capability.NET_ADMIN)
+                .withHostConfig(new HostConfig()
+                    .withCapAdd(Capability.NET_ADMIN)
+                )
                 .withName(name)
                 .exec();
         LOGGER.info("Container created with id: " + containerResponse.getId());
@@ -110,11 +111,11 @@ public class DockerManager implements Manager {
         LOGGER.info("Starting creating container with volume " + volumePath);
         Volume volume = new Volume(volumePath);
         CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
-                .withPrivileged(true)
                 .withVolumes(volume)
-                .withBinds(new Bind(bindPath, volume))
-                .withCapAdd(Capability.NET_ADMIN)
-                .withCmd()
+                .withHostConfig(new HostConfig()
+                    .withBinds(new Bind(bindPath, volume))
+                    .withCapAdd(Capability.NET_ADMIN)
+                )
                 .withName(name)
                 .exec();
         LOGGER.info("Container created with id: " + containerResponse.getId());
@@ -137,10 +138,10 @@ public class DockerManager implements Manager {
         gelfProps.put("gelf-address", "udp://" + elasticIP + ":" + logshtashPort);
         LogConfig gelfLog = new LogConfig(LogConfig.LoggingType.GELF, gelfProps);
         CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
-                .withPrivileged(true)
-                .withCapAdd(Capability.NET_ADMIN)
-                .withLogConfig(gelfLog)
-                .withCmd()
+                .withHostConfig(new HostConfig()
+                    .withCapAdd(Capability.NET_ADMIN)
+                    .withLogConfig(gelfLog)
+                )
                 .withName(name)
                 .exec();
         LOGGER.info("Container created with id: " + containerResponse.getId());
@@ -260,6 +261,7 @@ public class DockerManager implements Manager {
         try {
             String[] commandWithArguments = command.split("\\s+");
             ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(container.getId())
+                    .withPrivileged(true)
                     .withAttachStdout(true)
                     .withCmd(commandWithArguments)
                     .withUser("root")
